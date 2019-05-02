@@ -1,0 +1,11 @@
+#pragma once
+
+
+#define CROSSOVERRATE 0.7
+#define MUTATIONRATE 0.05
+
+#define POPSIZE 100
+
+#define GENELENGTH 10
+#define CHROMOSOMELENGTH 3* GENELENGTH
+
