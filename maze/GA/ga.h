@@ -22,7 +22,7 @@ struct Genome
 	//decode each gene into decimal from bin
 	std::vector<int> Decode();
 
-	int BinToInt(const std::vector<int> &v);
+	int BinToInt(const std::vector<int> &vec);
 
 	//overload < for sorting
 	friend bool operator<(const Genome& lhs, const Genome& rhs)
