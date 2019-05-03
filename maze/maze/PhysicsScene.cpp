@@ -113,7 +113,29 @@ bool PhysicsScene::plane2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 }
 
 bool PhysicsScene::plane2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
-{
+{	
+	Plane *plane = dynamic_cast<Plane*>(obj2);
+	Sphere *sphere = dynamic_cast<Sphere*>(obj1);
+
+	//if this check is successful then test for collision
+	if (plane != nullptr && sphere != nullptr)
+	{
+
+
+		glm::vec2 collisionNormal = plane->getNormal();
+		float planeToSphere = glm::dot(sphere->getPosition(), plane->getNormal()) - plane->getDistance();
+
+
+		float intersection = sphere->getRadius() - planeToSphere;
+		if (intersection > 0)
+		{
+			sphere->setPosition(sphere->getPosition() + collisionNormal * intersection);
+
+			plane->resolveCollision(sphere);
+			return true;
+		}
+
+	}
 	return false;
 }
 
@@ -187,7 +209,6 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 
 
-		sphere->SetLinearDrag(0.01);
 		glm::vec2 collisionNormal = plane->getNormal();
 		float sphereToPlane = glm::dot(sphere->getPosition(), plane->getNormal()) - plane->getDistance();
 
@@ -198,7 +219,6 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 			sphere->setPosition(sphere->getPosition() + collisionNormal * intersection);
 
 			plane->resolveCollision(sphere);
-			sphere->SetLinearDrag(0.3);
 			return true;
 		}
 

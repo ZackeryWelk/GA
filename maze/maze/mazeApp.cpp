@@ -25,6 +25,8 @@ bool mazeApp::startup() {
 	m_physicsScene->setGravity(glm::vec2(0,0));
 	m_physicsScene->setTimeStep(0.01f);
 
+	m_player = new Sphere(glm::vec2(-20, -40), glm::vec2(0, 0), 5, 2, glm::vec4(0, 0, 1, 1));
+	m_physicsScene->addActor(m_player);
 
 	Plane* boundary1 = new Plane(glm::vec2(0, 1), -55);
 	Plane* boundary2 = new Plane(glm::vec2(0, -1), -55);
@@ -36,11 +38,16 @@ bool mazeApp::startup() {
 	m_physicsScene->addActor(boundary3);
 	m_physicsScene->addActor(boundary4);
 
-	m_player = new Sphere(glm::vec2(-10, -10), glm::vec2(0, 0), 5, 2, glm::vec4(0, 0, 1, 1));
-	m_physicsScene->addActor(m_player);
+
 
 	Square* wall1 = new Square(glm::vec2(50, 50), glm::vec2(0, 0), 99999999, glm::vec2(10, 10), glm::vec4(1, 0, 0, 1));
 	m_physicsScene->addActor(wall1);
+	Square* wall2 = new Square(glm::vec2(-10, -50), glm::vec2(0, 0), 99999999, glm::vec2(5, 15), glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(wall2);
+	Square* wall3 = new Square(glm::vec2(30, 20), glm::vec2(0, 0), 99999999, glm::vec2(5, 4), glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(wall3);
+	Square* wall4 = new Square(glm::vec2(20, -30), glm::vec2(0, 0), 99999999, glm::vec2(4, 3), glm::vec4(1, 0, 0, 1));
+	m_physicsScene->addActor(wall4);
 
 	return true;
 }
