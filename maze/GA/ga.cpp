@@ -7,7 +7,7 @@ Genome::Genome(const int numBits, const int geneSize):fitness(0),geneLength(gene
 	//creating a random bit string
 	for (int i = 0; i < numBits; ++i)
 	{
-		vecBits.push_back(randInt(0, 1));
+		vecBits.push_back(ga::randInt(0,1));
 	}
 }
 

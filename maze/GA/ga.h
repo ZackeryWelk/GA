@@ -4,7 +4,7 @@
 
 #include "utilities.h"
 #include "define.h"
-
+#include <math.h>
 
 struct Genome
 {
@@ -32,6 +32,10 @@ struct Genome
 };
 
 
+
+
+
+
 class ga
 {
 public:
@@ -54,7 +58,8 @@ public:
 	std::vector<Genome> getGenome() { return m_vecGenome; }
 	void setGenome(std::vector<Genome> genome) { m_vecGenome = genome; }
 
-
+	static int randInt(int x, int y) { return rand() % (y - x + 1) + x; }
+	static float randFloat() { return(rand()) / (RAND_MAX + 1.0f); }
 
 private:
 	std::vector<Genome> m_vecGenome;
@@ -90,5 +95,8 @@ private:
 	void createStartPop();
 
 	void calculateTotalFitness();
+
+protected:
+	ga*		test;
 };
 
