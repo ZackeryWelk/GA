@@ -49,8 +49,47 @@ int Genome::BinToInt(const std::vector<int>& vec)
 	return val;
 }
 
+//updates fitness score then makes a new pop using roulette wheel selection, crossover and mutation 
 void ga::epoch()
 {
+	//creating a new population
+	int newBabies = 0;
+
+	calculateTotalFitness();
+
+	//create storage for the new babies
+	std::vector<Genome> vecBabyGenomes;
+
+	if (!(ELITECOPYNUM * ELITENUM % 2))
+	{
+		grabNBest(ELITENUM, ELITECOPYNUM, vecBabyGenomes);
+	}
+
+	while (vecBabyGenomes.size() < m_popSize)
+	{
+		//selecting 2 parents
+		Genome mum = rouletteWheelSelection();
+		Genome dad = rouletteWheelSelection();
+
+		//crossover
+		Genome baby1, baby2;
+		crossover(mum.vecBits, dad.vecBits, baby1.vecBits, baby2.vecBits);
+
+		//mutation
+		mutate(baby1.vecBits);
+		mutate(baby2.vecBits);
+
+		//adding the kids to the pop
+		vecBabyGenomes.push_back(baby1);
+		vecBabyGenomes.push_back(baby2);
+
+		newBabies += 2;
+	}
+	//copying baby into starting population
+	m_vecGenome = vecBabyGenomes;
+
+	//counting to the next gen
+	++m_generation;
 }
 
 //goes through each genome and has a chance to flip the bit dependant on the mutation rate set in define.h (should be a low number)

@@ -4,6 +4,7 @@
 #include "Input.h"
 #include <glm/ext.hpp>
 
+
 mazeApp::mazeApp() {
 
 }
@@ -14,7 +15,7 @@ mazeApp::~mazeApp() {
 
 bool mazeApp::startup() {
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
-
+	
 	m_2dRenderer = new aie::Renderer2D();
 
 	// TODO: remember to change this when redistributing a build!

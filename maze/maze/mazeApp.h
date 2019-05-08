@@ -5,6 +5,8 @@
 #include <Gizmos.h>
 #include "PhysicsScene.h"
 #include "square.h"
+#include <ga.h>
+
 
 class mazeApp : public aie::Application {
 public:
@@ -19,7 +21,7 @@ public:
 	virtual void draw();
 
 protected:
-
+	
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 
