@@ -2,7 +2,6 @@
 #include <vector>
 #include <algorithm>
 
-#include "utilities.h"
 #include "define.h"
 #include <math.h>
 
