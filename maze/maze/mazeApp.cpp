@@ -26,9 +26,15 @@ bool mazeApp::startup() {
 	m_physicsScene->setGravity(glm::vec2(0,0));
 	m_physicsScene->setTimeStep(0.01f);
 
-	m_player = new Sphere(glm::vec2(-20, -40), glm::vec2(0, 0), 5, 2, glm::vec4(0, 0, 1, 1));
+	//player circle
+	m_player = new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 5, 2, glm::vec4(0, 0, 1, 1));
 	m_physicsScene->addActor(m_player);
 
+	//goal
+	m_goal = new Sphere(glm::vec2(70, 40), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
+	m_physicsScene->addActor(m_goal);
+
+	//edge of the map
 	Plane* boundary1 = new Plane(glm::vec2(0, 1), -55);
 	Plane* boundary2 = new Plane(glm::vec2(0, -1), -55);
 	Plane* boundary3 = new Plane(glm::vec2(1, 0), -95);
@@ -40,8 +46,8 @@ bool mazeApp::startup() {
 	m_physicsScene->addActor(boundary4);
 
 
-
-	Square* wall1 = new Square(glm::vec2(50, 50), glm::vec2(0, 0), 99999999, glm::vec2(10, 10), glm::vec4(1, 0, 0, 1));
+	//walls for maze
+	Square* wall1 = new Square(glm::vec2(40, 50), glm::vec2(0, 0), 99999999, glm::vec2(5, 5), glm::vec4(1, 0, 0, 1));
 	m_physicsScene->addActor(wall1);
 	Square* wall2 = new Square(glm::vec2(-10, -50), glm::vec2(0, 0), 99999999, glm::vec2(5, 15), glm::vec4(1, 0, 0, 1));
 	m_physicsScene->addActor(wall2);
@@ -49,6 +55,11 @@ bool mazeApp::startup() {
 	m_physicsScene->addActor(wall3);
 	Square* wall4 = new Square(glm::vec2(20, -30), glm::vec2(0, 0), 99999999, glm::vec2(4, 3), glm::vec4(1, 0, 0, 1));
 	m_physicsScene->addActor(wall4);
+
+	//genetic algorithm initialisation
+	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
+
+	m_vecPop = m_ga->getGenome();
 
 	return true;
 }
@@ -109,4 +120,34 @@ void mazeApp::draw() {
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+void mazeApp::epoch()
+{
+	float bestFitness = -1000;
+
+	for (int i = 0; i < m_vecPop.size(); ++i)
+	{
+		
+		float dist = -glm::distance(m_player->getPosition(), m_goal->getPosition());
+		m_vecPop[i].fitness = dist;
+
+		if (dist > bestFitness)
+		{
+			bestFitness = dist;
+
+			m_best = i;
+		}
+	}//onto the next genome
+
+	//now does and epoch of the genetic alg
+	//replace the genome
+	m_ga->setGenome(m_vecPop);
+
+	m_ga->epoch();
+
+	//get new genome
+	m_vecPop = m_ga->getGenome();
+
+	++m_generation;
 }

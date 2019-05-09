@@ -7,6 +7,11 @@
 #include "square.h"
 #include <ga.h>
 
+struct gaDirForce
+{
+	int x, y;
+	float force;
+};
 
 class mazeApp : public aie::Application {
 public:
@@ -20,12 +25,26 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	void epoch();
+
 protected:
 	
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 
 	Sphere*				m_player;
+	Sphere*				m_goal;
 	PhysicsScene*		m_physicsScene;
+
+
+
+	//genetic algorithm stuff
+	std::vector<Genome>		m_vecPop;
+	std::vector<gaDirForce> m_dirForce;
+	ga*						m_ga;
+
+	float					m_best;
+	int						m_generation;
+	
 
 };
