@@ -5,8 +5,9 @@
 #define MUTATIONRATE 0.05
 
 #define POPSIZE 25
+//8 directional 1 force
 
-#define GENELENGTH 8
+#define GENELENGTH 9
 #define CHROMOSOMELENGTH 3* GENELENGTH
 
 #define ELITENUM 4
