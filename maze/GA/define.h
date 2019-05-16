@@ -7,7 +7,7 @@
 #define POPSIZE 25
 //8 directional 1 force
 
-#define GENELENGTH 9
+#define GENELENGTH 30
 #define CHROMOSOMELENGTH 3* GENELENGTH
 
 #define ELITENUM 4

@@ -6,7 +6,7 @@ int main() {
 	auto app = new mazeApp();
 
 	// initialise and loop
-	app->run("AIE", 1280, 720, false);
+	app->run("AIE", app->getScreenWidth(), app->getScreenHeight(), false);
 
 	// deallocation
 	delete app;

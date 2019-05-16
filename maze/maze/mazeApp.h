@@ -6,6 +6,8 @@
 #include "PhysicsScene.h"
 #include "square.h"
 #include <ga.h>
+#include <math.h>
+
 
 struct gaDirForce
 {
@@ -26,6 +28,10 @@ public:
 	virtual void draw();
 
 	void epoch();
+	void decode(Genome &gen, float &x, float &y);
+
+	int getScreenWidth() { return screenWidth; }
+	int getScreenHeight() { return screenHeight; }
 
 protected:
 	
@@ -36,7 +42,7 @@ protected:
 	Sphere*				m_goal;
 	PhysicsScene*		m_physicsScene;
 
-
+	
 
 	//genetic algorithm stuff
 	std::vector<Genome>		m_vecPop;
@@ -45,6 +51,9 @@ protected:
 
 	float					m_best;
 	int						m_generation;
+
+	int screenWidth;
+	int screenHeight;
 	
 
 };

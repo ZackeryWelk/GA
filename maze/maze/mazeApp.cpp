@@ -4,9 +4,11 @@
 #include "Input.h"
 #include <glm/ext.hpp>
 
+#define BITMULTIPLIER pow(2,GENELENGTH)
 
 mazeApp::mazeApp() {
-
+	screenHeight = 720;
+	screenWidth  = 1280;
 }
 
 mazeApp::~mazeApp() {
@@ -17,7 +19,7 @@ bool mazeApp::startup() {
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 	
 	m_2dRenderer = new aie::Renderer2D();
-
+	
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
@@ -58,7 +60,7 @@ bool mazeApp::startup() {
 
 	//genetic algorithm initialisation
 	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
-
+		
 	m_vecPop = m_ga->getGenome();
 
 	return true;
@@ -102,6 +104,8 @@ void mazeApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	epoch();
 }
 
 void mazeApp::draw() {
@@ -125,21 +129,27 @@ void mazeApp::draw() {
 void mazeApp::epoch()
 {
 	float bestFitness = -1000;
+	for (int p = 0; p <  m_vecPop.size(); ++p)
+	{ 	
+		//decode the genome
+		float x, y;
 
-	for (int i = 0; i < m_vecPop.size(); ++i)
-	{
-		
-		float dist = -glm::distance(m_player->getPosition(), m_goal->getPosition());
-		m_vecPop[i].fitness = dist;
+		decode(m_vecPop[p], x, y);
 
-		if (dist > bestFitness)
+		for (int i = 0; i < m_vecPop.size(); ++i)
 		{
-			bestFitness = dist;
-
-			m_best = i;
-		}
-	}//onto the next genome
-
+			//placeholder distance measurement
+			float dist = -glm::distance(m_player->getPosition(), m_goal->getPosition());
+			m_vecPop[i].fitness = dist;
+			
+			if (dist > bestFitness)
+			{
+				bestFitness = dist;
+				m_best = i;
+			}
+		}//onto the next genome
+		//std::cout << bestFitness << m_generation << std::endl;
+	}
 	//now does and epoch of the genetic alg
 	//replace the genome
 	m_ga->setGenome(m_vecPop);
@@ -151,3 +161,20 @@ void mazeApp::epoch()
 
 	++m_generation;
 }
+
+void mazeApp::decode(Genome &gen, float &x, float &y)
+{
+	std::vector<int> decodedGen = gen.Decode();
+
+	//calculate the force and the direction
+	float conversionMulti = 0.1f / BITMULTIPLIER;
+
+	conversionMulti = 0.1f / BITMULTIPLIER;
+
+	x = decodedGen[0] * conversionMulti;
+	y = decodedGen[1] * conversionMulti;
+
+}
+
+
+
