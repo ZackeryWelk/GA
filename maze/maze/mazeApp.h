@@ -27,18 +27,32 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
-	void epoch();
-	void decode(Genome &gen, float &x, float &y);
+	//void epoch();
+	//void decode(Genome &gen, float &x, float &y);
+
+
+	//string ga
+	void strMovement(std::string bits);
+	void aiMove(Sphere* test);
+	int fitnessCalc();
+	void strEpoch();
+
+
 
 	int getScreenWidth() { return screenWidth; }
 	int getScreenHeight() { return screenHeight; }
 
 protected:
-	
+	//string ga
+	std::vector<int>	m_moveOrder;
+	bool				m_found;
+	float				strFitness;
+	float				m_timer;
+
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 
-	Sphere*				m_player;
+	std::vector<Sphere*> m_player;
 	Sphere*				m_goal;
 	PhysicsScene*		m_physicsScene;
 

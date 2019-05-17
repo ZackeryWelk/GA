@@ -4,6 +4,8 @@
 
 #include "define.h"
 #include <math.h>
+#include <string>
+#include <random>
 
 struct Genome
 {
@@ -28,6 +30,15 @@ struct Genome
 	{
 		return (lhs.fitness > rhs.fitness);
 	}
+};
+
+struct strChromoType
+{
+	std::string strBits;
+	float strFitness;
+
+	strChromoType() : strBits(""), strFitness(0.0f) {};
+	strChromoType(std::string bits, float fitness): strBits(bits), strFitness(fitness){}
 };
 
 
@@ -97,5 +108,26 @@ private:
 
 protected:
 	ga*		test;
+
+
+
+
+
+
+
+	//test for string ga
+
+public:
+
+	std::string strGetRandBits(int length);
+
+	int strBinToDec(std::string bits);
+
+	int strParseBits(std::string bits, int* buffer);
+
+	void strMutate(std::string &bits);
+	void strCrossover(std::string &offspring1, std::string &offspring2);
+	std::string strRoulette(int totalFitness, strChromoType* population);
+
 };
 

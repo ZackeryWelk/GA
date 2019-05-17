@@ -162,7 +162,7 @@ void ga::grabNBest(int NBest, const int numCopies, std::vector<Genome>& vecNewPo
 	std::sort(m_vecGenome.begin(), m_vecGenome.end());
 
 	//adding set amount of copies of the most fit to the vector
-	while (NBest--)/*?????????????????????????????????????????????????????????????????????????????????*/
+	while (NBest--)
 	{
 		for (int i = 0; i < numCopies; ++i)
 		{
@@ -196,4 +196,151 @@ void ga::calculateTotalFitness()
 	{
 		m_totalFitnessScore += m_vecGenome[i].fitness;
 	}
+}
+
+
+
+
+
+
+
+//string based GA test
+
+
+
+
+//gets random 1's or 0's set to a desired length
+std::string ga::strGetRandBits(int length)
+{
+	std::string bits;
+	std::random_device generator;
+	//std::default_random_engine generator;
+	std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
+	for (int i = 0; i < length; i++)
+	{	
+
+		float randFloat = distribution(generator);
+
+		
+
+		if (randFloat > 0.5f)
+		{
+			bits += "1";
+		}
+		else
+		{
+			bits += "0";
+		}
+		return bits;
+	}
+}
+
+//converts from bin string to decimal int
+int ga::strBinToDec(std::string bits)
+{
+	int val = 0;
+	int valueToAdd = 1;
+
+	for (int i = bits.length(); i > 0; i--)
+	{
+		if (bits.at(i - 1) == '1')
+		{
+			val += valueToAdd;
+
+		}
+		valueToAdd *= 2;
+	}//onto next bit
+	return val;
+}	 
+
+//this will step through a chromosome 1 gene at a time and give each gene a decimal value
+int ga::strParseBits(std::string bits, int * buffer)
+{
+	int cBuff = 0;
+
+	int thisGene = 0;
+
+	for (int i = 0; i < CHROMOSOMELENGTH; i += GENELENGTH)
+	{			
+		thisGene = strBinToDec(bits.substr(i, GENELENGTH));
+
+		if (thisGene > 15)
+		{
+			continue;
+		}
+		else
+		{
+			buffer[cBuff++] = thisGene;
+		}
+	}
+	return cBuff;
+}
+
+
+void ga::strMutate(std::string & bits)
+{
+	std::random_device generator;
+	std::uniform_real_distribution<float> distribution(0, 1);
+
+	for (int i = 0; i < bits.length(); i++)
+	{
+		float strRandFloat = distribution(generator);
+
+		if (strRandFloat < MUTATIONRATE)
+		{
+			if (bits.at(i) == '1')
+			{
+				bits.at(i) = '0';
+			}
+			else
+			{
+				bits.at(i) = 'i';
+			}
+		}
+	}
+	return;
+}
+
+//dependant on the crossover rate this function will find a random point on chromosomes and swap bits after that point
+void ga::strCrossover(std::string & offspring1, std::string & offspring2)
+{
+	std::random_device generator;
+	std::uniform_real_distribution<float> distribution(0, 1);
+
+	float strRandFloat = distribution(generator);
+
+	if (strRandFloat < CROSSOVERRATE)
+	{
+		int crossover = (int)(strRandFloat * CHROMOSOMELENGTH);
+
+		std::string t1 = offspring1.substr(0, crossover) + offspring2.substr(crossover, CHROMOSOMELENGTH);
+		std::string t2 = offspring2.substr(0, crossover) + offspring1.substr(crossover, CHROMOSOMELENGTH);
+
+		offspring1 = t1; 
+		offspring2 = t2;
+	}
+}
+
+//selects a chromo from the pop through roulette wheel selection
+std::string ga::strRoulette(int totalFitness, strChromoType * population)
+{
+	std::random_device generator;
+	std::uniform_real_distribution<float> distribution(0, 1);
+
+	float strRandFloat = distribution(generator);
+
+	float slice = (float)(strRandFloat* totalFitness);
+
+	float fitnessSoFar = 0.0f;
+
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		fitnessSoFar += population[i].strFitness;
+		//if the fitness so far is more than the random number return the chromo at this point 
+		if (fitnessSoFar >= slice)
+		{
+			return population[i].strBits;
+		}
+	}
+	return "";
 }

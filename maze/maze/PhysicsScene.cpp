@@ -228,27 +228,27 @@ bool PhysicsScene::sphere2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 
 bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 {
-	Sphere *sphere1 = dynamic_cast<Sphere*>(obj1);
-	Sphere *sphere2 = dynamic_cast<Sphere*>(obj2);
-	//if it is successful then test for collision
-	if (sphere1 != nullptr && sphere2 != nullptr)
-	{
-		glm::vec2 displacement = sphere1->getPosition() - sphere2->getPosition();
-		if (glm::length(displacement) < (sphere1->getRadius() + sphere2->getRadius()))
-		{
-
-			float overlap = (sphere1->getRadius() + sphere2->getRadius()) - (glm::length(displacement));
-			glm::vec2 offset = glm::normalize(displacement) * overlap;
-
-
-			sphere1->setPosition(sphere1->getPosition() + offset * 0.5f);
-			sphere2->setPosition(sphere2->getPosition() + -offset * 0.5f);
-
-			sphere1->resolveCollision(sphere2);
-
-			return true;
-		}
-	}
+	//Sphere *sphere1 = dynamic_cast<Sphere*>(obj1);
+	//Sphere *sphere2 = dynamic_cast<Sphere*>(obj2);
+	////if it is successful then test for collision
+	//if (sphere1 != nullptr && sphere2 != nullptr)
+	//{
+	//	glm::vec2 displacement = sphere1->getPosition() - sphere2->getPosition();
+	//	if (glm::length(displacement) < (sphere1->getRadius() + sphere2->getRadius()))
+	//	{
+	//
+	//		float overlap = (sphere1->getRadius() + sphere2->getRadius()) - (glm::length(displacement));
+	//		glm::vec2 offset = glm::normalize(displacement) * overlap;
+	//
+	//
+	//		sphere1->setPosition(sphere1->getPosition() + offset * 0.5f);
+	//		sphere2->setPosition(sphere2->getPosition() + -offset * 0.5f);
+	//
+	//		sphere1->resolveCollision(sphere2);
+	//
+	//		return true;
+	//	}
+	//}
 	return false;
 }
 
