@@ -65,7 +65,8 @@ bool mazeApp::startup() {
 		
 	//m_vecPop = m_ga->getGenome();
 	
-	strEpoch();
+	
+	
 	return true;
 }
 
@@ -81,9 +82,9 @@ void mazeApp::update(float deltaTime) {
 	m_timer = deltaTime;
 	// input example
 	aie::Input* input = aie::Input::getInstance();
-	
+
 	aie::Gizmos::clear();
-	
+
 
 	m_physicsScene->update(deltaTime);
 	m_physicsScene->updatedGizmos();
@@ -91,8 +92,16 @@ void mazeApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
-	
-	//epoch();
+	if (isRunning == false)
+	{
+		strEpoch();
+		isRunning == true;
+	}
+
+	if (m_found == true)
+	{
+		std::cout << "found" << std::endl;
+	}
 }
 
 void mazeApp::draw() {
@@ -244,43 +253,47 @@ void mazeApp::aiMove(Sphere* test)
 	
 	for (int i = 0; i < m_moveOrder.size(); i++)
 	{
-		if (m_timer > 0.5f)
+		for (int p = 0; p < POPSIZE; ++p)
 		{
-			for (int p = 0; p < 26; ++p)
+			if (m_moveOrder[i] == 1)
 			{
-				if (m_moveOrder[i] == 1)
-				{
-					test[p].applyForce(glm::vec2(-3, 0));//left
-				}
-				else if (m_moveOrder[i] == 2)
-				{
-					test[p].applyForce(glm::vec2(3, 0));//right
-				}
-				else if (m_moveOrder[i] == 3)
-				{
-					test[p].applyForce(glm::vec2(0, 3));//up
-				}
-				else if (m_moveOrder[i] == 4)
-				{
-					test[p].applyForce(glm::vec2(0, -3));//down
-				}
-				else if (m_moveOrder[i] == 5)
-				{
-					test[p].applyForce(glm::vec2(-3, 3));//up left
-				}
-				else if (m_moveOrder[i] == 6)
-				{
-					test[p].applyForce(glm::vec2(3, 3));//up right
-				}
-				else if (m_moveOrder[i] == 7)
-				{
-					test[p].applyForce(glm::vec2(3, 3));//down right
-				}
-				else if (m_moveOrder[i] == 8)
-				{
-					test[p].applyForce(glm::vec2(-3, -3));//down left
-				}
-				m_timer = 0;
+				//test[p].applyForce(glm::vec2(-3, 0));//left
+				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, 0));
+			}
+			else if (m_moveOrder[i] == 2)
+			{
+				//test[p].applyForce(glm::vec2(3, 0));//right
+				test[p].setPosition(test[p].getPosition() - glm::vec2(5, 0));
+			}
+			else if (m_moveOrder[i] == 3)
+			{
+				//test[p].applyForce(glm::vec2(0, 3));//up
+				test[p].setPosition(test[p].getPosition() - glm::vec2(0, 5));
+			}
+			else if (m_moveOrder[i] == 4)
+			{
+				//test[p].applyForce(glm::vec2(0, -3));//down
+				test[p].setPosition(test[p].getPosition() - glm::vec2(0, -5));
+			}
+			else if (m_moveOrder[i] == 5)
+			{
+				//test[p].applyForce(glm::vec2(-3, 3));//up left
+				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, 5));
+			}
+			else if (m_moveOrder[i] == 6)
+			{
+				//test[p].applyForce(glm::vec2(3, 3));//up right
+				test[p].setPosition(test[p].getPosition() - glm::vec2(5, 5));
+			}
+			else if (m_moveOrder[i] == 7)
+			{
+				//test[p].applyForce(glm::vec2(3, 3));//down right
+				test[p].setPosition(test[p].getPosition() - glm::vec2(5, -5));
+			}
+			else if (m_moveOrder[i] == 8)
+			{
+				//test[p].applyForce(glm::vec2(-3, -3));//down left
+				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, -5));
 			}
 		}
 	}
@@ -299,29 +312,25 @@ int mazeApp::fitnessCalc()
 
 void mazeApp::strEpoch()
 {
-	strChromoType Population[POPSIZE];
+	strChromoType Population[POPSIZE] ;
+
+	//for (int i = 0; i < POPSIZE; i++)
+	//{
+	//	Population[i].strBits = m_ga->strGetRandBits(CHROMOSOMELENGTH);
+	//	Population[i].strFitness = 0.0f;
+	//}
+
+
+	float totalFitness = 0.0f;
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
-		Population[i].strBits = m_ga->strGetRandBits(CHROMOSOMELENGTH);
-		Population[i].strFitness = 0.0f;
+		//
+		strMovement(Population[i].strBits);
+		aiMove(m_player[i]);
 	}
+	m_ga->strEpoch();
 
-	int generation = 0;
-
-	m_found = false;
-
-	while (!m_found)
-	{
-		float totalFitness = 0.0f;
-
-		for (int i = 0; i < POPSIZE; i++)
-		{
-			//
-			strMovement(Population[i].strBits);
-			aiMove(m_player[i]);
-		}
-	}
 }
 
 

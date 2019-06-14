@@ -174,17 +174,26 @@ void ga::grabNBest(int NBest, const int numCopies, std::vector<Genome>& vecNewPo
 //creating a starting population
 void ga::createStartPop()
 {
-	m_vecGenome.clear();
+	//m_vecGenome.clear();
+	//
+	//for (int i = 0; i < m_popSize; i++)
+	//{
+	//	m_vecGenome.push_back(Genome(m_chromoLength, m_geneLength));
+	//}
+	//
+	//
+	////resets all variables
+	//m_generation = 0;
+	//m_totalFitnessScore = 0;
 
-	for (int i = 0; i < m_popSize; i++)
+	//str start pop
+	for (int i = 0; i < POPSIZE; i++)
 	{
-		m_vecGenome.push_back(Genome(m_chromoLength, m_geneLength));
+		m_pop[i].strBits = strGetRandBits(CHROMOSOMELENGTH);
+		
+		m_pop[i].strFitness = 0.0f;
+		m_generation = 0;
 	}
-
-
-	//resets all variables
-	m_generation = 0;
-	m_totalFitnessScore = 0;
 }
 
 //calculating total fitness score
@@ -344,3 +353,67 @@ std::string ga::strRoulette(int totalFitness, strChromoType * population)
 	}
 	return "";
 }
+
+void ga::strEpoch()
+{
+	//creating a new population
+
+	strCalcTotFitness();
+
+	//create storage for the new babies
+	strChromoType vecBabyGenomes[POPSIZE];
+
+	int cPop = 0;
+	
+	while (cPop < m_popSize)
+	{
+		//selecting 2 parents
+		std::string offspring1 = strRoulette(m_totalFitnessScore,m_pop);
+		std::string offspring2 = strRoulette(m_totalFitnessScore,m_pop);
+
+		//crossover
+		strCrossover(offspring1,offspring2);
+
+		//mutation
+		strMutate(offspring1);
+		strMutate(offspring2);
+
+		//adding the kids to the pop
+		vecBabyGenomes[cPop++] = strChromoType(offspring1, 0.0f);
+		vecBabyGenomes[cPop++] = strChromoType(offspring2, 0.0f);
+
+	}
+	//copying baby into starting population
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		m_pop[i] = vecBabyGenomes[i];
+	}
+
+	//counting to the next gen
+	++m_generation;
+}
+
+//void ga::strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType>& vecNewPop)
+//{
+//	std::sort(m_vecChromo.begin(), m_vecChromo.end());
+//	
+//	//adding set amount of copies of the most fit to the vector
+//	while (nBest--)
+//	{
+//		for (int i = 0; i < numCopies; ++i)
+//		{
+//			vecNewPop.push_back(m_vecChromo[nBest]);
+//		}
+//	}
+//}
+
+void ga::strCalcTotFitness()
+{
+	m_totalFitnessScore = 0;
+	for (int i = 0; i < m_popSize; ++i)
+	{
+		m_totalFitnessScore += m_pop[i].strFitness;
+	}
+}
+
+

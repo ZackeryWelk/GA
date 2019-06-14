@@ -73,7 +73,7 @@ public:
 
 private:
 	std::vector<Genome> m_vecGenome;
-
+	//std::vector<strChromoType> m_vecChromo;
 	int m_popSize;
 
 	float m_crossoverRate;
@@ -118,6 +118,8 @@ protected:
 	//test for string ga
 
 public:
+	strChromoType m_pop[POPSIZE];
+
 
 	std::string strGetRandBits(int length);
 
@@ -128,6 +130,10 @@ public:
 	void strMutate(std::string &bits);
 	void strCrossover(std::string &offspring1, std::string &offspring2);
 	std::string strRoulette(int totalFitness, strChromoType* population);
+	void strEpoch();
+	//void strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType> &vecNewPop);
+	void strCalcTotFitness();
+
 
 };
 

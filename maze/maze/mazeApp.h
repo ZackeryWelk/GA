@@ -15,7 +15,7 @@ struct gaDirForce
 	float force;
 };
 
-class mazeApp : public aie::Application {
+class mazeApp : public aie::Application{
 public:
 
 	mazeApp();
@@ -68,6 +68,8 @@ protected:
 
 	int screenWidth;
 	int screenHeight;
+
+	bool isRunning = false;
 	
 
 };
