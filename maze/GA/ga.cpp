@@ -240,8 +240,9 @@ std::string ga::strGetRandBits(int length)
 		{
 			bits += "0";
 		}
-		return bits;
 	}
+		return bits;
+
 }
 
 //converts from bin string to decimal int
@@ -280,6 +281,7 @@ int ga::strParseBits(std::string bits, int * buffer)
 		else
 		{
 			buffer[cBuff++] = thisGene;
+			continue;
 		}
 	}
 	return cBuff;
@@ -391,6 +393,7 @@ void ga::strEpoch()
 
 	//counting to the next gen
 	++m_generation;
+	
 }
 
 //void ga::strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType>& vecNewPop)

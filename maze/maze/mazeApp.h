@@ -7,6 +7,7 @@
 #include "square.h"
 #include <ga.h>
 #include <math.h>
+#include <Windows.h>
 
 
 struct gaDirForce
@@ -34,6 +35,7 @@ public:
 	//string ga
 	void strMovement(std::string bits);
 	void aiMove(Sphere* test);
+	void aiPhysicsMove(Sphere* player);
 	int fitnessCalc();
 	void strEpoch();
 
@@ -47,12 +49,14 @@ protected:
 	std::vector<int>	m_moveOrder;
 	bool				m_found;
 	float				strFitness;
-	float				m_timer;
+	float				m_timer = 0.0f;
+	bool				m_isMoving;
 
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 
 	std::vector<Sphere*> m_player;
+	glm::vec2			m_playerSpawnPos;
 	Sphere*				m_goal;
 	PhysicsScene*		m_physicsScene;
 
@@ -60,6 +64,8 @@ protected:
 
 	//genetic algorithm stuff
 	std::vector<Genome>		m_vecPop;
+
+
 	std::vector<gaDirForce> m_dirForce;
 	ga*						m_ga;
 
@@ -70,6 +76,6 @@ protected:
 	int screenHeight;
 
 	bool isRunning = false;
-	
+	bool isDone;
 
 };

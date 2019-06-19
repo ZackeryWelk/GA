@@ -31,8 +31,9 @@ bool mazeApp::startup() {
 	//player circle
 	for (int p = 0; p < 26; ++p)
 	{
-		m_player.push_back(new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 5, 2, glm::vec4(0, 0, 1, 1)));
+		m_player.push_back(new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 2, glm::vec4(0, 0, 1, 1)));
 		m_physicsScene->addActor(m_player[p]);
+		m_playerSpawnPos = m_player[p]->getPosition();
 	}
 	//goal
 	m_goal = new Sphere(glm::vec2(70, 40), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
@@ -64,8 +65,7 @@ bool mazeApp::startup() {
 	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
 		
 	//m_vecPop = m_ga->getGenome();
-	
-	
+	m_ga->createStartPop();
 	
 	return true;
 }
@@ -79,12 +79,19 @@ void mazeApp::shutdown() {
 }
 
 void mazeApp::update(float deltaTime) {
-	m_timer = deltaTime;
+	m_timer += deltaTime;
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
 	aie::Gizmos::clear();
-
+	for (int l = 0; l < POPSIZE; l++)
+	{
+		if (m_player[l]->getVelocity() == glm::vec2(0, 0))
+		{
+			m_isMoving = false;
+			fitnessCalc();
+		}
+	}
 
 	m_physicsScene->update(deltaTime);
 	m_physicsScene->updatedGizmos();
@@ -92,10 +99,16 @@ void mazeApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
-	if (isRunning == false)
-	{
+
+	if (isRunning == false || input->isKeyDown(aie::INPUT_KEY_RIGHT))
+	{				
+		for (int i = 0; i < m_player.size(); i++)
+		{
+			m_player[i]->setPosition(m_playerSpawnPos);
+		}
+		aie::Gizmos::clear();
+		isRunning = true;
 		strEpoch();
-		isRunning == true;
 	}
 
 	if (m_found == true)
@@ -253,66 +266,151 @@ void mazeApp::aiMove(Sphere* test)
 	
 	for (int i = 0; i < m_moveOrder.size(); i++)
 	{
-		for (int p = 0; p < POPSIZE; ++p)
-		{
+
+			//left
 			if (m_moveOrder[i] == 1)
 			{
-				//test[p].applyForce(glm::vec2(-3, 0));//left
-				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, 0));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(-1, 0));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(),glm::vec4(1,0,0,1));
 			}
+			//right
 			else if (m_moveOrder[i] == 2)
 			{
-				//test[p].applyForce(glm::vec2(3, 0));//right
-				test[p].setPosition(test[p].getPosition() - glm::vec2(5, 0));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(1, 0));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//up
 			else if (m_moveOrder[i] == 3)
 			{
-				//test[p].applyForce(glm::vec2(0, 3));//up
-				test[p].setPosition(test[p].getPosition() - glm::vec2(0, 5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(0, 1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//down
 			else if (m_moveOrder[i] == 4)
 			{
-				//test[p].applyForce(glm::vec2(0, -3));//down
-				test[p].setPosition(test[p].getPosition() - glm::vec2(0, -5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(0, -1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//up left
 			else if (m_moveOrder[i] == 5)
 			{
-				//test[p].applyForce(glm::vec2(-3, 3));//up left
-				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, 5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(-1, 1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//up right
 			else if (m_moveOrder[i] == 6)
 			{
-				//test[p].applyForce(glm::vec2(3, 3));//up right
-				test[p].setPosition(test[p].getPosition() - glm::vec2(5, 5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(1, 1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//down right
 			else if (m_moveOrder[i] == 7)
 			{
-				//test[p].applyForce(glm::vec2(3, 3));//down right
-				test[p].setPosition(test[p].getPosition() - glm::vec2(5, -5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(1, -1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
+			//down left
 			else if (m_moveOrder[i] == 8)
 			{
-				//test[p].applyForce(glm::vec2(-3, -3));//down left
-				test[p].setPosition(test[p].getPosition() - glm::vec2(-5, -5));
+				glm::vec2 origPos = test->getPosition();
+				test->setPosition(test->getPosition() - glm::vec2(-1, -1));
+
+				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
-		}
 	}
 	fitnessCalc();
 }
 
+void mazeApp::aiPhysicsMove(Sphere * player)
+{
+	
+
+		for (int i = 0; i < m_moveOrder.size(); i++)
+		{
+			if (m_timer > 0.3f)
+			{
+			//left
+			if (m_moveOrder[i] == 1)
+			{
+				player->applyForce(glm::vec2(-5, 0));
+				continue;
+			}
+			//right
+			else if (m_moveOrder[i] == 2)
+			{
+				player->applyForce(glm::vec2(5, 0));
+				continue;
+			}
+			//up
+			else if (m_moveOrder[i] == 3)
+			{
+				player->applyForce(glm::vec2(0, 5));
+				continue;
+			}
+			//down
+			else if (m_moveOrder[i] == 4)
+			{
+				player->applyForce(glm::vec2(0, -5));
+				continue;
+			}
+			//up left
+			else if (m_moveOrder[i] == 5)
+			{
+				player->applyForce(glm::vec2(-5, 5));
+				continue;
+			}
+			//up right
+			else if (m_moveOrder[i] == 6)
+			{
+				player->applyForce(glm::vec2(5, 5));
+				continue;
+			}
+			//down right
+			else if (m_moveOrder[i] == 7)
+			{
+				player->applyForce(glm::vec2(5, -5));
+				continue;
+			}
+			//down left
+			else if (m_moveOrder[i] == 8)
+			{
+				player->applyForce(glm::vec2(-5, -5));
+				continue;
+			}
+			m_timer = 0;
+			}
+		}
+}
+
 int mazeApp::fitnessCalc()
 {
-	for (int p = 0; p < 26; ++p)
+	for (int p = 0; p < POPSIZE; ++p)
 	{
 		strFitness = -glm::distance(m_player[p]->getPosition(), m_goal->getPosition());
+		//m_ga->m_pop[p].strFitness = strFitness;
 	}
+	std::cout << strFitness << std::endl;
 	return strFitness;
 }
 
 
 void mazeApp::strEpoch()
 {
-	strChromoType Population[POPSIZE] ;
+	//strChromoType Population[] = m_ga->m_pop;
 
 	//for (int i = 0; i < POPSIZE; i++)
 	//{
@@ -320,17 +418,18 @@ void mazeApp::strEpoch()
 	//	Population[i].strFitness = 0.0f;
 	//}
 
-
+	m_moveOrder.clear();
 	float totalFitness = 0.0f;
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
-		//
-		strMovement(Population[i].strBits);
-		aiMove(m_player[i]);
+		strMovement(m_ga->m_pop[i].strBits);//Population[i].strBits);
+		//aiMove(m_player[i]);
+		aiPhysicsMove(m_player[i]);
 	}
 	m_ga->strEpoch();
-
+	std::cout << m_ga->m_generation << std::endl;
+	//isRunning = false;
 }
 
 

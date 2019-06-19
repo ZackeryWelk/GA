@@ -87,7 +87,7 @@ private:
 
 	float m_totalFitnessScore;
 
-	int m_generation;
+	//int m_generation;
 
 
 	void mutate(std::vector<int> &vecBits);
@@ -102,7 +102,7 @@ private:
 	void grabNBest(int NBest, const int numCopies, std::vector<Genome> &vecNewPop);
 
 
-	void createStartPop();
+	//void createStartPop();
 
 	void calculateTotalFitness();
 
@@ -119,6 +119,7 @@ protected:
 
 public:
 	strChromoType m_pop[POPSIZE];
+	int m_generation;
 
 
 	std::string strGetRandBits(int length);
@@ -134,6 +135,7 @@ public:
 	//void strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType> &vecNewPop);
 	void strCalcTotFitness();
 
+	void createStartPop();
 
 };
 
