@@ -305,7 +305,7 @@ void ga::strMutate(std::string & bits)
 			}
 			else
 			{
-				bits.at(i) = 'i';
+				bits.at(i) = '1';
 			}
 		}
 	}
@@ -333,7 +333,7 @@ void ga::strCrossover(std::string & offspring1, std::string & offspring2)
 }
 
 //selects a chromo from the pop through roulette wheel selection
-std::string ga::strRoulette(int totalFitness, strChromoType * population)
+std::string ga::strRoulette(int totalFitness/*, strChromoType * population*/)
 {
 	std::random_device generator;
 	std::uniform_real_distribution<float> distribution(0, 1);
@@ -346,11 +346,11 @@ std::string ga::strRoulette(int totalFitness, strChromoType * population)
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
-		fitnessSoFar += population[i].strFitness;
+		fitnessSoFar -= m_pop[i].strFitness;// population[i].strFitness;
 		//if the fitness so far is more than the random number return the chromo at this point 
 		if (fitnessSoFar >= slice)
 		{
-			return population[i].strBits;
+			return m_pop[i].strBits;//population[i].strBits;
 		}
 	}
 	return "";
@@ -363,15 +363,22 @@ void ga::strEpoch()
 	strCalcTotFitness();
 
 	//create storage for the new babies
-	strChromoType vecBabyGenomes[POPSIZE];
+	//strChromoType vecBabyGenomes[POPSIZE];
 
-	int cPop = 0;
-	
+	strFindHighestFit();
+	vecBabyGenomes[0] = temp;
+	vecBabyGenomes[1] = temp2;
+	vecBabyGenomes[0].strFitness = 0;
+	vecBabyGenomes[1].strFitness = 0;
+
+
+	int cPop = 2;
+
 	while (cPop < m_popSize)
 	{
 		//selecting 2 parents
-		std::string offspring1 = strRoulette(m_totalFitnessScore,m_pop);
-		std::string offspring2 = strRoulette(m_totalFitnessScore,m_pop);
+		std::string offspring1 = strRoulette(m_totalFitnessScore/*,m_pop*/);
+		std::string offspring2 = strRoulette(m_totalFitnessScore/*,m_pop*/);
 
 		//crossover
 		strCrossover(offspring1,offspring2);
@@ -396,16 +403,16 @@ void ga::strEpoch()
 	
 }
 
-//void ga::strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType>& vecNewPop)
+//void ga::strGrabNBest(int nBest, const int numCopies, strChromoType vecNewPop[])
 //{
-//	std::sort(m_vecChromo.begin(), m_vecChromo.end());
-//	
+//	std::sort(std::begin(m_pop), std::end(m_pop));
 //	//adding set amount of copies of the most fit to the vector
 //	while (nBest--)
 //	{
 //		for (int i = 0; i < numCopies; ++i)
 //		{
-//			vecNewPop.push_back(m_vecChromo[nBest]);
+//			//vecNewPop.push_back(m_pop[nBest]);
+//			vecNewPop[i] = m_pop[nBest];
 //		}
 //	}
 //}
@@ -415,8 +422,28 @@ void ga::strCalcTotFitness()
 	m_totalFitnessScore = 0;
 	for (int i = 0; i < m_popSize; ++i)
 	{
-		m_totalFitnessScore += m_pop[i].strFitness;
+		m_totalFitnessScore -= m_pop[i].strFitness;
 	}
 }
+
+void ga::strFindHighestFit()
+{
+	if (bestFit == NULL)
+	{
+		bestFit = m_pop[0].strFitness;
+	}
+
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		if (bestFit <= m_pop[i].strFitness)
+		{
+			bestFit = m_pop[i].strFitness;
+			temp = m_pop[i];
+			temp2 = m_pop[i];
+		}
+	}
+}
+
+
 
 

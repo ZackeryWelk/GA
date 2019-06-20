@@ -29,7 +29,7 @@ bool mazeApp::startup() {
 	m_physicsScene->setTimeStep(0.01f);
 
 	//player circle
-	for (int p = 0; p < 26; ++p)
+	for (int p = 0; p < POPSIZE; ++p)
 	{
 		m_player.push_back(new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 2, glm::vec4(0, 0, 1, 1)));
 		m_physicsScene->addActor(m_player[p]);
@@ -38,28 +38,33 @@ bool mazeApp::startup() {
 	//goal
 	m_goal = new Sphere(glm::vec2(70, 40), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
 	m_physicsScene->addActor(m_goal);
+	
+	std::random_device generator;
+	//number of walls and where they can spawn
+	std::uniform_int_distribution<int> distribution(0, 8);
+	std::uniform_int_distribution<int> locDistributionX(-60, 60);
+	std::uniform_int_distribution<int> locDistributionY(-40, 40);
+
+	int wallCount = distribution(generator);
+	//walls for the maze
+	for (int w = 0; w < wallCount; ++w)
+	{
+		int spawnX = locDistributionX(generator);
+		int spawnY = locDistributionY(generator);
+		m_walls.push_back(new Square(glm::vec2(spawnX,spawnY), glm::vec2(0, 0), 99999999, glm::vec2(3, 3), glm::vec4(1, 0, 0, 1)));
+		m_physicsScene->addActor(m_walls[w]);
+	}
 
 	//edge of the map
-	Plane* boundary1 = new Plane(glm::vec2(0, 1), -55);
-	Plane* boundary2 = new Plane(glm::vec2(0, -1), -55);
-	Plane* boundary3 = new Plane(glm::vec2(1, 0), -95);
-	Plane* boundary4 = new Plane(glm::vec2(-1, 0), -95);
+	m_bounds.push_back(new Plane(glm::vec2(0, 1), -55));
+	m_physicsScene->addActor(m_bounds[0]);
+	m_bounds.push_back(new Plane(glm::vec2(0, -1), -55));
+	m_physicsScene->addActor(m_bounds[1]);
+	m_bounds.push_back(new Plane(glm::vec2(1, 0), -95));
+	m_physicsScene->addActor(m_bounds[2]);
+	m_bounds.push_back(new Plane(glm::vec2(-1, 0), -95));
+	m_physicsScene->addActor(m_bounds[3]);
 
-	m_physicsScene->addActor(boundary1);
-	m_physicsScene->addActor(boundary2);
-	m_physicsScene->addActor(boundary3);
-	m_physicsScene->addActor(boundary4);
-
-	
-	//walls for maze
-	Square* wall1 = new Square(glm::vec2(40, 50), glm::vec2(0, 0), 99999999, glm::vec2(5, 5), glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(wall1);
-	Square* wall2 = new Square(glm::vec2(-10, -50), glm::vec2(0, 0), 99999999, glm::vec2(5, 15), glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(wall2);
-	Square* wall3 = new Square(glm::vec2(30, 20), glm::vec2(0, 0), 99999999, glm::vec2(5, 4), glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(wall3);
-	Square* wall4 = new Square(glm::vec2(20, -30), glm::vec2(0, 0), 99999999, glm::vec2(4, 3), glm::vec4(1, 0, 0, 1));
-	m_physicsScene->addActor(wall4);
 
 	//genetic algorithm initialisation
 	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
@@ -84,14 +89,15 @@ void mazeApp::update(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();
 
 	aie::Gizmos::clear();
-	for (int l = 0; l < POPSIZE; l++)
-	{
-		if (m_player[l]->getVelocity() == glm::vec2(0, 0))
-		{
-			m_isMoving = false;
-			fitnessCalc();
-		}
-	}
+
+	//for (int p = 0; p < POPSIZE; p++)
+	//{
+	//	if (checkCol(m_player[p]) == true)
+	//	{
+	//		m_ga->m_pop[p].strFitness = -1000;
+	//		m_player[p]->setPosition(glm::vec2(-70, 40));
+	//	}
+	//}
 
 	m_physicsScene->update(deltaTime);
 	m_physicsScene->updatedGizmos();
@@ -100,7 +106,7 @@ void mazeApp::update(float deltaTime) {
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	if (isRunning == false || input->isKeyDown(aie::INPUT_KEY_RIGHT))
+	if (isRunning == false)// && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
 	{				
 		for (int i = 0; i < m_player.size(); i++)
 		{
@@ -121,7 +127,7 @@ void mazeApp::draw() {
 
 	// wipe the screen to the background colour
 	clearScreen();
-
+	
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
@@ -271,7 +277,7 @@ void mazeApp::aiMove(Sphere* test)
 			if (m_moveOrder[i] == 1)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(-1, 0));
+				test->setPosition(test->getPosition() - glm::vec2(-2, 0));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(),glm::vec4(1,0,0,1));
 			}
@@ -279,7 +285,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 2)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(1, 0));
+				test->setPosition(test->getPosition() - glm::vec2(2, 0));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -287,7 +293,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 3)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(0, 1));
+				test->setPosition(test->getPosition() - glm::vec2(0, 2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -295,7 +301,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 4)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(0, -1));
+				test->setPosition(test->getPosition() - glm::vec2(0, -2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -303,7 +309,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 5)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(-1, 1));
+				test->setPosition(test->getPosition() - glm::vec2(-2, 2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -311,7 +317,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 6)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(1, 1));
+				test->setPosition(test->getPosition() - glm::vec2(2, 2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -319,7 +325,7 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 7)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(1, -1));
+				test->setPosition(test->getPosition() - glm::vec2(2, -2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
@@ -327,73 +333,78 @@ void mazeApp::aiMove(Sphere* test)
 			else if (m_moveOrder[i] == 8)
 			{
 				glm::vec2 origPos = test->getPosition();
-				test->setPosition(test->getPosition() - glm::vec2(-1, -1));
+				test->setPosition(test->getPosition() - glm::vec2(-2, -2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
 			}
 	}
-	fitnessCalc();
 }
 
 void mazeApp::aiPhysicsMove(Sphere * player)
 {
-	
-
-		for (int i = 0; i < m_moveOrder.size(); i++)
+	for (int i = 0; i < m_moveOrder.size(); i++)
+	{
+		if (m_timer > 0.3f)
 		{
-			if (m_timer > 0.3f)
-			{
 			//left
 			if (m_moveOrder[i] == 1)
 			{
-				player->applyForce(glm::vec2(-5, 0));
+				player->applyForce(glm::vec2(-10, 0));
+				m_timer = 0;
 				continue;
 			}
 			//right
 			else if (m_moveOrder[i] == 2)
 			{
-				player->applyForce(glm::vec2(5, 0));
+				player->applyForce(glm::vec2(10, 0));
+				m_timer = 0;
 				continue;
 			}
 			//up
 			else if (m_moveOrder[i] == 3)
 			{
-				player->applyForce(glm::vec2(0, 5));
+				player->applyForce(glm::vec2(0, 10));
+				m_timer = 0;
 				continue;
 			}
 			//down
 			else if (m_moveOrder[i] == 4)
 			{
-				player->applyForce(glm::vec2(0, -5));
+				player->applyForce(glm::vec2(0, -10));
+				m_timer = 0;
 				continue;
 			}
 			//up left
 			else if (m_moveOrder[i] == 5)
 			{
-				player->applyForce(glm::vec2(-5, 5));
+				player->applyForce(glm::vec2(-10, 10));
+				m_timer = 0;
 				continue;
 			}
 			//up right
 			else if (m_moveOrder[i] == 6)
 			{
-				player->applyForce(glm::vec2(5, 5));
+				player->applyForce(glm::vec2(10, 10));
+				m_timer = 0;
 				continue;
 			}
 			//down right
 			else if (m_moveOrder[i] == 7)
 			{
-				player->applyForce(glm::vec2(5, -5));
+				player->applyForce(glm::vec2(10, -10));
+				m_timer = 0;
 				continue;
 			}
 			//down left
 			else if (m_moveOrder[i] == 8)
 			{
-				player->applyForce(glm::vec2(-5, -5));
+				player->applyForce(glm::vec2(-10, -10));
+				m_timer = 0;
 				continue;
 			}
 			m_timer = 0;
-			}
 		}
+	}
 }
 
 int mazeApp::fitnessCalc()
@@ -424,12 +435,59 @@ void mazeApp::strEpoch()
 	for (int i = 0; i < POPSIZE; i++)
 	{
 		strMovement(m_ga->m_pop[i].strBits);//Population[i].strBits);
-		//aiMove(m_player[i]);
-		aiPhysicsMove(m_player[i]);
+		aiMove(m_player[i]);
+		//aiPhysicsMove(m_player[i]);
+		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 20)
+		{
+			m_ga->m_pop[i].strFitness = 0;
+			m_found = true;
+		}
+		else
+		{
+			m_ga->m_pop[i].strFitness = -glm::distance(m_player[i]->getPosition(), m_goal->getPosition());
+		}
+		std::cout << m_ga->m_pop[i].strFitness << std::endl;
+		//std::cout << m_player[i]->getPosition().x << " , " << m_player[i]->getPosition().y << std::endl;
 	}
 	m_ga->strEpoch();
 	std::cout << m_ga->m_generation << std::endl;
-	//isRunning = false;
+	
+	isRunning = false;
+}
+
+bool mazeApp::checkCol(Sphere* player)
+{
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		for (int w = 0; w < m_walls.size(); w++)
+		{
+			glm::vec2 topRight(m_walls[w]->getPosition().x + m_walls[w]->getExtents().x, m_walls[w]->getPosition().y + m_walls[w]->getExtents().y);
+			glm::vec2 BottomLeft(m_walls[w]->getPosition().x - m_walls[w]->getExtents().x, m_walls[w]->getPosition().y - m_walls[w]->getExtents().y);
+
+			glm::vec2 closestPoint = glm::clamp(player[i].getPosition(), BottomLeft, topRight);
+
+			glm::vec2 displacement = player[i].getPosition() - closestPoint;
+			
+			float overlap = player[i].getRadius() - glm::length(displacement);
+			if (overlap >= 0)
+			{
+				return true;
+			}
+		}
+		for (int b = 0; b < m_bounds.size(); b++)
+		{
+			glm::vec2 collisionNormal = m_bounds[b]->getNormal();
+			float sphereToPlane = glm::dot(m_player[i]->getPosition(), m_bounds[b]->getNormal()) - m_bounds[b]->getDistance();
+
+
+			float intersection = m_player[i]->getRadius() - sphereToPlane;
+			if (intersection >= 0)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 

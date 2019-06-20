@@ -108,8 +108,10 @@ private:
 
 protected:
 	ga*		test;
+	strChromoType temp;
+	strChromoType temp2;
 
-
+	int bestFit;
 
 
 
@@ -119,6 +121,8 @@ protected:
 
 public:
 	strChromoType m_pop[POPSIZE];
+	strChromoType vecBabyGenomes[POPSIZE];
+
 	int m_generation;
 
 
@@ -130,10 +134,11 @@ public:
 
 	void strMutate(std::string &bits);
 	void strCrossover(std::string &offspring1, std::string &offspring2);
-	std::string strRoulette(int totalFitness, strChromoType* population);
+	std::string strRoulette(int totalFitness/*, strChromoType* population*/);
 	void strEpoch();
-	//void strGrabNBest(int nBest, const int numCopies, std::vector<strChromoType> &vecNewPop);
+	//void strGrabNBest(int nBest, const int numCopies,strChromoType vecNewPop[]);
 	void strCalcTotFitness();
+	void strFindHighestFit();
 
 	void createStartPop();
 
