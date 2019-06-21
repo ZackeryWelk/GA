@@ -2,7 +2,7 @@
 
 
 #define CROSSOVERRATE 0.7
-#define MUTATIONRATE 0.02
+#define MUTATIONRATE 0.005
 
 #define POPSIZE 30
 

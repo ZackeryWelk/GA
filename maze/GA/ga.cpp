@@ -387,6 +387,7 @@ void ga::strEpoch()
 //	strFindLowestFit();
 //	m_pop[worstFitIndex] = vecBabyGenomes[0];
 
+	//removes genes that have gone through or touched walls
 	for (int e = 0; e < POPSIZE; e++)
 	{
 		if (m_pop[e].strWall = true)

@@ -94,7 +94,7 @@ void mazeApp::update(float deltaTime) {
 		int goalSpawnY;
 		goalSpawnX = input->getMouseX();
 		goalSpawnY = input->getMouseY();
-
+		
 		hasStarted = true;
 		m_goal = new Sphere(glm::vec2(goalSpawnX, goalSpawnY), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
 		m_physicsScene->addActor(m_goal);
@@ -129,7 +129,7 @@ void mazeApp::update(float deltaTime) {
 		if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 			quit();
 
-		if (isRunning == false && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
+		if (isRunning == false)// && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
 		{
 			for (int i = 0; i < m_player.size(); i++)
 			{
@@ -138,6 +138,11 @@ void mazeApp::update(float deltaTime) {
 			//aie::Gizmos::clear();
 			isRunning = true;
 			strEpoch();
+		}
+
+		if (isRunning == false && m_found == true)
+		{
+			CHROMOSOMELENGTH / 2;
 		}
 	}
 	
@@ -290,7 +295,7 @@ void mazeApp::strMovement(std::string bits)
 
 void mazeApp::aiMove(Sphere* test)
 {
-	
+	m_numberOfMoves = 0;
 	for (int i = 0; i < m_moveOrder.size(); i++)
 	{
 
@@ -357,6 +362,13 @@ void mazeApp::aiMove(Sphere* test)
 				test->setPosition(test->getPosition() - glm::vec2(-2, -2));
 
 				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+			}
+
+			//counts how many move the ai makes to get to the goal and will stop moving, will use this in fitness function to try and reduce amount of moves
+			m_numberOfMoves++;
+			if (glm::distance(test->getPosition(), m_goal->getPosition()) <= 3)
+			{
+				break;
 			}
 	}
 }
@@ -448,19 +460,20 @@ void mazeApp::strEpoch()
 	{
 		strMovement(m_ga->m_pop[i].strBits);//Population[i].strBits);
 		aiMove(m_player[i]);
-		m_moveOrder.clear();
 
-		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 4)
+		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 3)
 		{
 			std::cout << "found after " << m_ga->m_generation << " generations" << std::endl;
 			m_found = true;
 		}
 		else// if(m_ga->m_pop[i].strWall == false)
 		{
-			m_ga->m_pop[i].strFitness = -glm::distance(m_player[i]->getPosition(), m_goal->getPosition());
+			m_ga->m_pop[i].strFitness = -glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) * m_numberOfMoves;
 		}
 		std::cout << m_ga->m_pop[i].strFitness << std::endl;
-		//std::cout << m_player[i]->getPosition().x << " , " << m_player[i]->getPosition().y << std::endl;
+
+		m_moveOrder.clear();
+
 	}
 	m_ga->strEpoch();
 	std::cout << m_ga->m_generation << std::endl;

@@ -74,6 +74,8 @@ protected:
 
 	float					m_best;
 	int						m_genCountForSol = 0;
+	int						m_numberOfMoves = 0;
+
 
 	bool hasStarted = false;
 
