@@ -36,8 +36,8 @@ bool mazeApp::startup() {
 		m_playerSpawnPos = m_player[p]->getPosition();
 	}
 	//goal
-	m_goal = new Sphere(glm::vec2(70, 40), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
-	m_physicsScene->addActor(m_goal);
+//	m_goal = new Sphere(glm::vec2(70, 40), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
+//	m_physicsScene->addActor(m_goal);
 	
 	std::random_device generator;
 	//number of walls and where they can spawn
@@ -87,35 +87,60 @@ void mazeApp::update(float deltaTime) {
 	m_timer += deltaTime;
 	// input example
 	aie::Input* input = aie::Input::getInstance();
+	
+	if (input->wasMouseButtonPressed(0) && hasStarted == false)
+	{
+		int goalSpawnX;
+		int goalSpawnY;
+		goalSpawnX = input->getMouseX();
+		goalSpawnY = input->getMouseY();
 
-	aie::Gizmos::clear();
+		hasStarted = true;
+		m_goal = new Sphere(glm::vec2(goalSpawnX, goalSpawnY), glm::vec2(0, 0), 99999999, 2, glm::vec4(0, 1, 0, 1));
+		m_physicsScene->addActor(m_goal);
 
-	//for (int p = 0; p < POPSIZE; p++)
-	//{
-	//	if (checkCol(m_player[p]) == true)
-	//	{
-	//		m_ga->m_pop[p].strFitness = -1000;
-	//		m_player[p]->setPosition(glm::vec2(-70, 40));
-	//	}
-	//}
-
-	m_physicsScene->update(deltaTime);
-	m_physicsScene->updatedGizmos();
-
-	// exit the application
-	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
-		quit();
-
-	if (isRunning == false && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
-	{				
-		for (int i = 0; i < m_player.size(); i++)
-		{
-			m_player[i]->setPosition(m_playerSpawnPos);
-		}
-		//aie::Gizmos::clear();
-		isRunning = true;
-		strEpoch();
 	}
+	if (hasStarted == true)
+	{
+		aie::Gizmos::clear();
+
+		//for (int p = 0; p < POPSIZE; p++)
+		//{
+		//	if (checkCol(m_player[p]) == true)
+		//	{
+		//		m_ga->m_pop[p].strFitness = -1000;
+		//		m_player[p]->setPosition(glm::vec2(-70, 40));
+		//	}
+		//}
+		for (int p = 0; p < POPSIZE; p++)
+		{
+			if (checkCol(m_player[p]) == true)
+			{
+				m_ga->m_pop[p].strWall = true;
+				//m_ga->m_pop->strFitness = -1000;
+			}
+		}
+
+
+		m_physicsScene->update(deltaTime);
+		m_physicsScene->updatedGizmos();
+
+		// exit the application
+		if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
+			quit();
+
+		if (isRunning == false && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
+		{
+			for (int i = 0; i < m_player.size(); i++)
+			{
+				m_player[i]->setPosition(m_playerSpawnPos);
+			}
+			//aie::Gizmos::clear();
+			isRunning = true;
+			strEpoch();
+		}
+	}
+	
 
 }
 
@@ -427,12 +452,10 @@ void mazeApp::strEpoch()
 
 		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 4)
 		{
-			m_ga->m_pop[i].strFitness = 0;
-			std::cout << "found after " << m_generation << " generations" << std::endl;
+			std::cout << "found after " << m_ga->m_generation << " generations" << std::endl;
 			m_found = true;
-
 		}
-		else
+		else// if(m_ga->m_pop[i].strWall == false)
 		{
 			m_ga->m_pop[i].strFitness = -glm::distance(m_player[i]->getPosition(), m_goal->getPosition());
 		}
@@ -468,8 +491,8 @@ bool mazeApp::checkCol(Sphere* player)
 		{
 			glm::vec2 collisionNormal = m_bounds[b]->getNormal();
 			float sphereToPlane = glm::dot(m_player[i]->getPosition(), m_bounds[b]->getNormal()) - m_bounds[b]->getDistance();
-
-
+		
+		
 			float intersection = m_player[i]->getRadius() - sphereToPlane;
 			if (intersection >= 0)
 			{

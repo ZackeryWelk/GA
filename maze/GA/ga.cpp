@@ -362,8 +362,8 @@ std::string ga::strRoulette(int totalFitness/*, strChromoType * population*/)
 void ga::strEpoch()
 {
 	//creating a new population
-	
-	//working as elitism
+
+		//working as elitism
 	strFindHighestFit();
 	vecBabyGenomes[0] = temp;
 	vecBabyGenomes[0].strFitness = 0;
@@ -376,16 +376,31 @@ void ga::strEpoch()
 	strMutate(editedElite1);
 	strMutate(editedElite2);
 	strMutate(editedElite3);
-	vecBabyGenomes[1] = strChromoType(editedElite1, 0.0f);
-	vecBabyGenomes[2] = strChromoType(editedElite2, 0.0f);
-	vecBabyGenomes[3] = strChromoType(editedElite2, 0.0f);
+	vecBabyGenomes[1] = strChromoType(editedElite1, 0.0f, false);
+	vecBabyGenomes[2] = strChromoType(editedElite2, 0.0f, false);
+	vecBabyGenomes[3] = strChromoType(editedElite2, 0.0f, false);
 
 
 	//changes the lowest fitness scoring chromosome into the highest scoring one so it replaces a bad scoring one with the best scoring one
-	strFindLowestFit();
-	m_pop[worstFitIndex] = temp;
-	strFindLowestFit();
-	m_pop[worstFitIndex] = vecBabyGenomes[0];
+//	strFindLowestFit();
+//	m_pop[worstFitIndex] = temp;
+//	strFindLowestFit();
+//	m_pop[worstFitIndex] = vecBabyGenomes[0];
+
+	for (int e = 0; e < POPSIZE; e++)
+	{
+		if (m_pop[e].strWall = true)
+		{
+			std::string replaced = temp.strBits;
+			strMutate(replaced);
+			ReplaceGenome[e] = strChromoType(replaced, 0.0f, false);
+
+			m_pop[e] = ReplaceGenome[e];
+		}
+	}
+
+
+
 
 	//calculates total fitness to then be used in roulette 
 	strCalcTotFitness();
@@ -409,8 +424,8 @@ void ga::strEpoch()
 		strMutate(offspring2);
 
 		//adding the kids to the pop
-		vecBabyGenomes[cPop++] = strChromoType(offspring1, 0.0f);
-		vecBabyGenomes[cPop++] = strChromoType(offspring2, 0.0f);
+		vecBabyGenomes[cPop++] = strChromoType(offspring1, 0.0f,false);
+		vecBabyGenomes[cPop++] = strChromoType(offspring2, 0.0f,false);
 
 	}
 	//copying baby into starting population

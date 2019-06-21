@@ -73,7 +73,9 @@ protected:
 	ga*						m_ga;
 
 	float					m_best;
-	int						m_generation;
+	int						m_genCountForSol = 0;
+
+	bool hasStarted = false;
 
 	int screenWidth;
 	int screenHeight;

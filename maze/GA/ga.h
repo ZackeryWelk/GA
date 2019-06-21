@@ -36,9 +36,10 @@ struct strChromoType
 {
 	std::string strBits;
 	float strFitness;
+	bool strWall;
 
-	strChromoType() : strBits(""), strFitness(0.0f) {};
-	strChromoType(std::string bits, float fitness): strBits(bits), strFitness(fitness){}
+	strChromoType() : strBits(""), strFitness(0.0f), strWall(false) {};
+	strChromoType(std::string bits, float fitness, bool wall): strBits(bits), strFitness(fitness), strWall(wall){}
 };
 
 
@@ -122,6 +123,7 @@ protected:
 public:
 	strChromoType m_pop[POPSIZE];
 	strChromoType vecBabyGenomes[POPSIZE];
+	strChromoType ReplaceGenome[POPSIZE];
 
 	int m_generation;
 
