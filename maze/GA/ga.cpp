@@ -213,6 +213,9 @@ void ga::calculateTotalFitness()
 
 
 
+
+
+
 //string based GA test
 
 
@@ -359,20 +362,38 @@ std::string ga::strRoulette(int totalFitness/*, strChromoType * population*/)
 void ga::strEpoch()
 {
 	//creating a new population
-
-	strCalcTotFitness();
-
-	//create storage for the new babies
-	//strChromoType vecBabyGenomes[POPSIZE];
-
+	
+	//working as elitism
 	strFindHighestFit();
 	vecBabyGenomes[0] = temp;
-	vecBabyGenomes[1] = temp2;
 	vecBabyGenomes[0].strFitness = 0;
-	vecBabyGenomes[1].strFitness = 0;
 
 
-	int cPop = 2;
+	//takes the best scoring chromo and instead of carrying it over directly it goes through mutation so it is slightly different to the current best gene 
+	std::string editedElite1 = temp.strBits;
+	std::string editedElite2 = temp.strBits;
+	std::string editedElite3 = temp.strBits;
+	strMutate(editedElite1);
+	strMutate(editedElite2);
+	strMutate(editedElite3);
+	vecBabyGenomes[1] = strChromoType(editedElite1, 0.0f);
+	vecBabyGenomes[2] = strChromoType(editedElite2, 0.0f);
+	vecBabyGenomes[3] = strChromoType(editedElite2, 0.0f);
+
+
+	//changes the lowest fitness scoring chromosome into the highest scoring one so it replaces a bad scoring one with the best scoring one
+	strFindLowestFit();
+	m_pop[worstFitIndex] = temp;
+	strFindLowestFit();
+	m_pop[worstFitIndex] = vecBabyGenomes[0];
+
+	//calculates total fitness to then be used in roulette 
+	strCalcTotFitness();
+
+
+
+	//change this depending on how much elitism there is
+	int cPop = 4;
 
 	while (cPop < m_popSize)
 	{
@@ -426,6 +447,7 @@ void ga::strCalcTotFitness()
 	}
 }
 
+//works as a primitive version of elitism
 void ga::strFindHighestFit()
 {
 	if (bestFit == NULL)
@@ -440,6 +462,19 @@ void ga::strFindHighestFit()
 			bestFit = m_pop[i].strFitness;
 			temp = m_pop[i];
 			temp2 = m_pop[i];
+		}
+	}
+}
+
+void ga::strFindLowestFit()
+{
+	int worstFit = m_pop[0].strFitness;
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		if (worstFit > m_pop[i].strFitness)
+		{
+			worstFit = m_pop[i].strFitness;
+			worstFitIndex = i;
 		}
 	}
 }

@@ -2,12 +2,12 @@
 
 
 #define CROSSOVERRATE 0.7
-#define MUTATIONRATE 0.03
+#define MUTATIONRATE 0.02
 
 #define POPSIZE 30
 
 
-#define GENELENGTH 8
+#define GENELENGTH 4
 #define CHROMOSOMELENGTH 600
 
 #define ELITENUM 4

@@ -254,31 +254,31 @@ bool PhysicsScene::sphere2Sphere(PhysicsObject* obj1, PhysicsObject* obj2)
 
 bool PhysicsScene::sphere2Box(PhysicsObject* obj1, PhysicsObject* obj2)
 {
-	Sphere *sphere = dynamic_cast<Sphere*>(obj1);
-	Square *box = dynamic_cast<Square*>(obj2);
-
-	if (sphere != nullptr && box != nullptr)
-	{
-
-
-		glm::vec2 topRight(box->getPosition().x + box->getExtents().x, box->getPosition().y + box->getExtents().y);
-		glm::vec2 BottomLeft(box->getPosition().x - box->getExtents().x, box->getPosition().y - box->getExtents().y);
-
-		glm::vec2 closestPoint = glm::clamp(sphere->getPosition(), BottomLeft, topRight);
-
-		glm::vec2 displacement = sphere->getPosition() - closestPoint;
-
-		float overlap = sphere->getRadius() - glm::length(displacement);
-
-		if (overlap > 0)
-		{
-			glm::vec2 offset = glm::normalize(displacement) * overlap;
-
-			sphere->setPosition(sphere->getPosition() + offset * 0.5f);
-			box->setPosition(box->getPosition() - offset * 0.5f);
-			sphere->resolveCollision(box);
-		}
-	}
+	//Sphere *sphere = dynamic_cast<Sphere*>(obj1);
+	//Square *box = dynamic_cast<Square*>(obj2);
+	//
+	//if (sphere != nullptr && box != nullptr)
+	//{
+	//
+	//
+	//	glm::vec2 topRight(box->getPosition().x + box->getExtents().x, box->getPosition().y + box->getExtents().y);
+	//	glm::vec2 BottomLeft(box->getPosition().x - box->getExtents().x, box->getPosition().y - box->getExtents().y);
+	//
+	//	glm::vec2 closestPoint = glm::clamp(sphere->getPosition(), BottomLeft, topRight);
+	//
+	//	glm::vec2 displacement = sphere->getPosition() - closestPoint;
+	//
+	//	float overlap = sphere->getRadius() - glm::length(displacement);
+	//
+	//	if (overlap > 0)
+	//	{
+	//		glm::vec2 offset = glm::normalize(displacement) * overlap;
+	//
+	//		sphere->setPosition(sphere->getPosition() + offset * 0.5f);
+	//		box->setPosition(box->getPosition() - offset * 0.5f);
+	//		sphere->resolveCollision(box);
+	//	}
+	//}
 	return false;
 }
 

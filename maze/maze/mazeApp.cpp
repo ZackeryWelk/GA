@@ -106,21 +106,17 @@ void mazeApp::update(float deltaTime) {
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	if (isRunning == false)// && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
+	if (isRunning == false && m_found == false)// || input->isKeyDown(aie::INPUT_KEY_RIGHT) && m_found = false)
 	{				
 		for (int i = 0; i < m_player.size(); i++)
 		{
 			m_player[i]->setPosition(m_playerSpawnPos);
 		}
-		aie::Gizmos::clear();
+		//aie::Gizmos::clear();
 		isRunning = true;
 		strEpoch();
 	}
 
-	if (m_found == true)
-	{
-		std::cout << "found" << std::endl;
-	}
 }
 
 void mazeApp::draw() {
@@ -421,26 +417,20 @@ int mazeApp::fitnessCalc()
 
 void mazeApp::strEpoch()
 {
-	//strChromoType Population[] = m_ga->m_pop;
-
-	//for (int i = 0; i < POPSIZE; i++)
-	//{
-	//	Population[i].strBits = m_ga->strGetRandBits(CHROMOSOMELENGTH);
-	//	Population[i].strFitness = 0.0f;
-	//}
-
-	m_moveOrder.clear();
 	float totalFitness = 0.0f;
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
 		strMovement(m_ga->m_pop[i].strBits);//Population[i].strBits);
 		aiMove(m_player[i]);
-		//aiPhysicsMove(m_player[i]);
-		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 20)
+		m_moveOrder.clear();
+
+		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 4)
 		{
 			m_ga->m_pop[i].strFitness = 0;
+			std::cout << "found after " << m_generation << " generations" << std::endl;
 			m_found = true;
+
 		}
 		else
 		{

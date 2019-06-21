@@ -112,7 +112,7 @@ protected:
 	strChromoType temp2;
 
 	int bestFit;
-
+	int worstFitIndex;
 
 
 
@@ -139,6 +139,7 @@ public:
 	//void strGrabNBest(int nBest, const int numCopies,strChromoType vecNewPop[]);
 	void strCalcTotFitness();
 	void strFindHighestFit();
+	void strFindLowestFit();
 
 	void createStartPop();
 
