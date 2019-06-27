@@ -96,7 +96,6 @@ private:
 
 protected:
 	ga*		test;
-	strChromoType temp;
 	strChromoType temp2;
 
 	int bestFit;
@@ -111,6 +110,7 @@ public:
 	strChromoType m_pop[POPSIZE];
 	strChromoType vecBabyGenomes[POPSIZE];
 	strChromoType ReplaceGenome[POPSIZE];
+	strChromoType temp;
 
 
 	int m_generation;

@@ -473,16 +473,20 @@ void mazeApp::strEpoch()
 		{
 			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*4) - m_numberOfMoves;
 		}
+
 		//outputs the fitness of every player
-		std::cout << m_ga->m_pop[i].strFitness << std::endl;
+		//std::cout << m_ga->m_pop[i].strFitness << std::endl;
 
 
 		//clears the moveorder made for that player to then be filled by the next player
 		m_moveOrder.clear();
 
 	}
+
 	//runs the GA
 	m_ga->strEpoch();
+	//outputs the fitness of the best of each gen
+	std::cout << m_ga->temp.strFitness << std::endl;
 	//outputs the generation number
 	std::cout << m_ga->m_generation << std::endl;
 	
