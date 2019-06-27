@@ -171,30 +171,6 @@ void ga::grabNBest(int NBest, const int numCopies, std::vector<Genome>& vecNewPo
 	}
 }
 
-//creating a starting population
-void ga::createStartPop()
-{
-	//m_vecGenome.clear();
-	//
-	//for (int i = 0; i < m_popSize; i++)
-	//{
-	//	m_vecGenome.push_back(Genome(m_chromoLength, m_geneLength));
-	//}
-	//
-	//
-	////resets all variables
-	//m_generation = 0;
-	//m_totalFitnessScore = 0;
-
-	//str start pop
-	for (int i = 0; i < POPSIZE; i++)
-	{
-		m_pop[i].strBits = strGetRandBits(CHROMOSOMELENGTH);
-		
-		m_pop[i].strFitness = 0.0f;
-		m_generation = 0;
-	}
-}
 
 //calculating total fitness score
 void ga::calculateTotalFitness()
@@ -216,9 +192,38 @@ void ga::calculateTotalFitness()
 
 
 
+
+
+
+
 //string based GA test
 
 
+//creating a starting population
+void ga::createStartPop()
+{
+	//m_vecGenome.clear();
+	//
+	//for (int i = 0; i < m_popSize; i++)
+	//{
+	//	m_vecGenome.push_back(Genome(m_chromoLength, m_geneLength));
+	//}
+	//
+	//
+	////resets all variables
+	//m_generation = 0;
+	//m_totalFitnessScore = 0;
+
+	//str start pop
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		//generates random bits and sets each thing in the pop to have no fitness and sets generation count to 0
+		m_pop[i].strBits = strGetRandBits(CHROMOSOMELENGTH);
+		
+		m_pop[i].strFitness = 0.0f;
+		m_generation = 0;
+	}
+}
 
 
 //gets random 1's or 0's set to a desired length
@@ -230,7 +235,7 @@ std::string ga::strGetRandBits(int length)
 	std::uniform_real_distribution<float> distribution(0.0f, 1.0f);
 	for (int i = 0; i < length; i++)
 	{	
-
+		//gets random float between 0-1 and whatever its closer to it will become a 1 or 0
 		float randFloat = distribution(generator);
 
 		
@@ -290,7 +295,7 @@ int ga::strParseBits(std::string bits, int * buffer)
 	return cBuff;
 }
 
-
+//has a chance equal to the mutation rate(set in define.h) for each bit in a chromosome to be swaped from a 1 to a 0 or vice versa
 void ga::strMutate(std::string & bits)
 {
 	std::random_device generator;
@@ -336,7 +341,7 @@ void ga::strCrossover(std::string & offspring1, std::string & offspring2)
 }
 
 //selects a chromo from the pop through roulette wheel selection
-std::string ga::strRoulette(int totalFitness/*, strChromoType * population*/)
+std::string ga::strRoulette(int totalFitness)
 {
 	std::random_device generator;
 	std::uniform_real_distribution<float> distribution(0, 1);
@@ -349,11 +354,11 @@ std::string ga::strRoulette(int totalFitness/*, strChromoType * population*/)
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
-		fitnessSoFar -= m_pop[i].strFitness;// population[i].strFitness;
+		fitnessSoFar -= m_pop[i].strFitness;
 		//if the fitness so far is more than the random number return the chromo at this point 
 		if (fitnessSoFar >= slice)
 		{
-			return m_pop[i].strBits;//population[i].strBits;
+			return m_pop[i].strBits;
 		}
 	}
 	return "";
@@ -363,40 +368,30 @@ void ga::strEpoch()
 {
 	//creating a new population
 
-		//working as elitism
+	//working as primitive elitism by just carrying over the top 1 fitness to the next generation
 	strFindHighestFit();
 	vecBabyGenomes[0] = temp;
 	vecBabyGenomes[0].strFitness = 0;
 
-
 	//takes the best scoring chromo and instead of carrying it over directly it goes through mutation so it is slightly different to the current best gene 
 	std::string editedElite1 = temp.strBits;
-	std::string editedElite2 = temp.strBits;
-	std::string editedElite3 = temp.strBits;
 	strMutate(editedElite1);
-	strMutate(editedElite2);
-	strMutate(editedElite3);
 	vecBabyGenomes[1] = strChromoType(editedElite1, 0.0f, false);
-	vecBabyGenomes[2] = strChromoType(editedElite2, 0.0f, false);
-	vecBabyGenomes[3] = strChromoType(editedElite2, 0.0f, false);
 
+	//removes the lowest scoring half of the pop
+	for (int b = 0; b < POPSIZE / 2; b++)
+	{
+		strFindLowestFit();
+		m_pop[worstFitIndex] = strChromoType("",0.0f,false);
+	}
 
-	//changes the lowest fitness scoring chromosome into the highest scoring one so it replaces a bad scoring one with the best scoring one
-//	strFindLowestFit();
-//	m_pop[worstFitIndex] = temp;
-//	strFindLowestFit();
-//	m_pop[worstFitIndex] = vecBabyGenomes[0];
 
 	//removes genes that have gone through or touched walls
 	for (int e = 0; e < POPSIZE; e++)
 	{
-		if (m_pop[e].strWall = true)
+		if (m_pop[e].strWall == true)
 		{
-			std::string replaced = temp.strBits;
-			strMutate(replaced);
-			ReplaceGenome[e] = strChromoType(replaced, 0.0f, false);
-
-			m_pop[e] = ReplaceGenome[e];
+			m_pop[e] = strChromoType("", 0.0f, false);
 		}
 	}
 
@@ -409,13 +404,13 @@ void ga::strEpoch()
 
 
 	//change this depending on how much elitism there is
-	int cPop = 4;
+	int cPop = 2;
 
 	while (cPop < m_popSize)
 	{
 		//selecting 2 parents
-		std::string offspring1 = strRoulette(m_totalFitnessScore/*,m_pop*/);
-		std::string offspring2 = strRoulette(m_totalFitnessScore/*,m_pop*/);
+		std::string offspring1 = strRoulette(m_totalFitnessScore);
+		std::string offspring2 = strRoulette(m_totalFitnessScore);
 
 		//crossover
 		strCrossover(offspring1,offspring2);
@@ -454,6 +449,7 @@ void ga::strEpoch()
 //	}
 //}
 
+//calculates the total fitness
 void ga::strCalcTotFitness()
 {
 	m_totalFitnessScore = 0;
@@ -463,7 +459,7 @@ void ga::strCalcTotFitness()
 	}
 }
 
-//works as a primitive version of elitism
+//find the highest scoring chromosome and is saved to be used in elitism
 void ga::strFindHighestFit()
 {
 	if (bestFit == NULL)
@@ -481,13 +477,13 @@ void ga::strFindHighestFit()
 		}
 	}
 }
-
+//finds the lowest scoring chromosome
 void ga::strFindLowestFit()
 {
 	int worstFit = m_pop[0].strFitness;
 	for (int i = 0; i < POPSIZE; i++)
 	{
-		if (worstFit > m_pop[i].strFitness)
+		if (worstFit > m_pop[i].strFitness && m_pop[i].strWall == false)
 		{
 			worstFit = m_pop[i].strFitness;
 			worstFitIndex = i;

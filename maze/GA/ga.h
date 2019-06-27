@@ -125,6 +125,7 @@ public:
 	strChromoType vecBabyGenomes[POPSIZE];
 	strChromoType ReplaceGenome[POPSIZE];
 
+
 	int m_generation;
 
 

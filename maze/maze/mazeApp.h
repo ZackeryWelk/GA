@@ -34,11 +34,10 @@ public:
 
 	//string ga
 	void strMovement(std::string bits);
-	void aiMove(Sphere* test);
-	void aiPhysicsMove(Sphere* player);
-	int fitnessCalc();
+	void aiMove(Sphere* test, strChromoType pop);
+	//void aiPhysicsMove(Sphere* player);
 	void strEpoch();
-	bool checkCol(Sphere* player);
+	//bool checkCol(Sphere* player);
 
 
 
@@ -56,6 +55,7 @@ protected:
 	aie::Renderer2D*	m_2dRenderer;
 	aie::Font*			m_font;
 
+	Sphere*				m_startPoint;
 	std::vector<Sphere*> m_player;
 	std::vector<Square*> m_walls;
 	std::vector<Plane*>  m_bounds;
@@ -84,5 +84,10 @@ protected:
 
 	bool isRunning = false;
 	bool isDone;
+
+
+	int goalX;
+	int goalY;
+	glm::vec2 startGoalP;
 
 };
