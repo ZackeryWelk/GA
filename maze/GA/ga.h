@@ -7,30 +7,30 @@
 #include <string>
 #include <random>
 
-struct Genome
-{
-	std::vector<int> vecBits;
-
-	float fitness;
-
-	//number of bits in a gene
-	int geneLength;
-
-	Genome():fitness(0), geneLength(GENELENGTH){}
-
-	Genome(const int numBits, const int geneSize);
-
-	//decode each gene into decimal from bin
-	std::vector<int> Decode();
-
-	int BinToInt(const std::vector<int> &vec);
-
-	//overload < for sorting
-	friend bool operator<(const Genome& lhs, const Genome& rhs)
-	{
-		return (lhs.fitness > rhs.fitness);
-	}
-};
+//struct Genome
+//{
+//	std::vector<int> vecBits;
+//
+//	float fitness;
+//
+//	//number of bits in a gene
+//	int geneLength;
+//
+//	Genome():fitness(0), geneLength(GENELENGTH){}
+//
+//	Genome(const int numBits, const int geneSize);
+//
+//	//decode each gene into decimal from bin
+//	std::vector<int> Decode();
+//
+//	int BinToInt(const std::vector<int> &vec);
+//
+//	//overload < for sorting
+//	friend bool operator<(const Genome& lhs, const Genome& rhs)
+//	{
+//		return (lhs.fitness > rhs.fitness);
+//	}
+//};
 
 struct strChromoType
 {
@@ -61,19 +61,17 @@ public:
 		createStartPop();
 	}
 
-
+	
 	//updates fitness scores, creates a new pop using selection crossover and mutation.
-	void epoch();
-
+	//void epoch();
 	//setter getter
-	std::vector<Genome> getGenome() { return m_vecGenome; }
-	void setGenome(std::vector<Genome> genome) { m_vecGenome = genome; }
-
-	static int randInt(int x, int y) { return rand() % (y - x + 1) + x; }
-	static float randFloat() { return(rand()) / (RAND_MAX + 1.0f); }
+	//std::vector<Genome> getGenome() { return m_vecGenome; }
+	//void setGenome(std::vector<Genome> genome) { m_vecGenome = genome; }
+	//static int randInt(int x, int y) { return rand() % (y - x + 1) + x; }
+	//static float randFloat() { return(rand()) / (RAND_MAX + 1.0f); }
 
 private:
-	std::vector<Genome> m_vecGenome;
+	//std::vector<Genome> m_vecGenome;
 	//std::vector<strChromoType> m_vecChromo;
 	int m_popSize;
 
@@ -89,23 +87,12 @@ private:
 	float m_totalFitnessScore;
 
 	//int m_generation;
-
-
-	void mutate(std::vector<int> &vecBits);
-
-	void crossover(const std::vector<int> &mum,
-				   const std::vector<int> &dad,
-						std::vector<int> &baby1,
-						std::vector<int> &baby2);
-
-	Genome&	rouletteWheelSelection();
-
-	void grabNBest(int NBest, const int numCopies, std::vector<Genome> &vecNewPop);
-
-
+	//void mutate(std::vector<int> &vecBits);
+	//void crossover(const std::vector<int> &mum, const std::vector<int> &dad, std::vector<int> &baby1, std::vector<int> &baby2);
+	//Genome&	rouletteWheelSelection();
+	//void grabNBest(int NBest, const int numCopies, std::vector<Genome> &vecNewPop);
 	//void createStartPop();
-
-	void calculateTotalFitness();
+	//void calculateTotalFitness();
 
 protected:
 	ga*		test;
@@ -137,7 +124,7 @@ public:
 
 	void strMutate(std::string &bits);
 	void strCrossover(std::string &offspring1, std::string &offspring2);
-	std::string strRoulette(int totalFitness/*, strChromoType* population*/);
+	std::string strRoulette(int totalFitness);
 	void strEpoch();
 	//void strGrabNBest(int nBest, const int numCopies,strChromoType vecNewPop[]);
 	void strCalcTotFitness();

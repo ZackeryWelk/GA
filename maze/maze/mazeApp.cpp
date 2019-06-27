@@ -42,7 +42,7 @@ bool mazeApp::startup() {
 	
 	std::random_device generator;
 	//number of walls and where they can spawn
-	std::uniform_int_distribution<int> distribution(0, 12);
+	std::uniform_int_distribution<int> distribution(0, 30);
 	std::uniform_int_distribution<int> locDistributionX(-60, 60);
 	std::uniform_int_distribution<int> locDistributionY(-40, 40);
 
@@ -70,8 +70,7 @@ bool mazeApp::startup() {
 	//genetic algorithm initialisation
 	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
 		
-	//m_vecPop = m_ga->getGenome();
-	m_ga->createStartPop();
+
 	
 	return true;
 }

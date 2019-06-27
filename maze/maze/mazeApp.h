@@ -66,7 +66,7 @@ protected:
 	
 
 	//genetic algorithm stuff
-	std::vector<Genome>		m_vecPop;
+	//std::vector<Genome>		m_vecPop;
 
 
 	std::vector<gaDirForce> m_dirForce;

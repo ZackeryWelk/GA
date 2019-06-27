@@ -8,7 +8,7 @@
 
 
 #define GENELENGTH 4
-#define CHROMOSOMELENGTH 700
+#define CHROMOSOMELENGTH 800
 
 
 
