@@ -498,10 +498,11 @@ void mazeApp::strEpoch()
 
 	//runs the GA
 	m_ga->strEpoch();
-	//outputs the fitness of the best of each gen
-	std::cout << m_ga->temp.strFitness << std::endl;
 	//outputs the generation number
-	std::cout << m_ga->m_generation << std::endl;
+	std::cout << "generation " << m_ga->m_generation << std::endl;
+	//outputs the fitness of the best of each gen
+	std::cout << "best fitness score " << m_ga->temp.strFitness << std::endl << std::endl;
+
 	
 	//tells the if statement in update that it can run another generation
 	isRunning = false;
