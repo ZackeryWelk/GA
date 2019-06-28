@@ -32,7 +32,7 @@ bool mazeApp::startup() {
 	//generating players 
 	for (int p = 0; p < POPSIZE; ++p)
 	{
-		m_player.push_back(new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 2, glm::vec4(0, 0, 1, 1)));
+		m_player.push_back(new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 1.5f, glm::vec4(0, 0, 1, 1)));
 		m_physicsScene->addActor(m_player[p]);
 		m_playerSpawnPos = m_player[p]->getPosition();
 	}
@@ -42,7 +42,7 @@ bool mazeApp::startup() {
 	
 	std::random_device generator;
 	//number of walls and where they can spawn
-	std::uniform_int_distribution<int> distribution(0, 30);
+	std::uniform_int_distribution<int> distribution(0, 35);
 	std::uniform_int_distribution<int> locDistributionX(-60, 60);
 	std::uniform_int_distribution<int> locDistributionY(-40, 40);
 
@@ -56,15 +56,23 @@ bool mazeApp::startup() {
 		m_physicsScene->addActor(m_walls[w]);
 	}
 
+	std::uniform_int_distribution<int>goalspawnXRand(0, 70);
+	std::uniform_int_distribution<int>goalspawnYRand(-40, 40);
+
+	int goalSpawnX = goalspawnXRand(generator);
+	int goalSpawnY = goalspawnYRand(generator);
+	m_goal = new Sphere(glm::vec2(goalSpawnX, goalSpawnY), glm::vec2(0, 0), 1, 2, glm::vec4(0, 1, 0, 1));
+	m_physicsScene->addActor(m_goal);
+
 	//edge of the map
-	m_bounds.push_back(new Plane(glm::vec2(0, 1), -55));
-	m_physicsScene->addActor(m_bounds[0]);
-	m_bounds.push_back(new Plane(glm::vec2(0, -1), -55));
-	m_physicsScene->addActor(m_bounds[1]);
-	m_bounds.push_back(new Plane(glm::vec2(1, 0), -95));
-	m_physicsScene->addActor(m_bounds[2]);
-	m_bounds.push_back(new Plane(glm::vec2(-1, 0), -95));
-	m_physicsScene->addActor(m_bounds[3]);
+	//m_bounds.push_back(new Plane(glm::vec2(0, 1), -55));
+	//m_physicsScene->addActor(m_bounds[0]);
+	//m_bounds.push_back(new Plane(glm::vec2(0, -1), -55));
+	//m_physicsScene->addActor(m_bounds[1]);
+	//m_bounds.push_back(new Plane(glm::vec2(1, 0), -95));
+	//m_physicsScene->addActor(m_bounds[2]);
+	//m_bounds.push_back(new Plane(glm::vec2(-1, 0), -95));
+	//m_physicsScene->addActor(m_bounds[3]);
 
 
 	//genetic algorithm initialisation
@@ -76,7 +84,7 @@ bool mazeApp::startup() {
 }
 
 void mazeApp::shutdown() {
-
+	
 	delete m_font;
 	delete m_2dRenderer;
 	
@@ -89,21 +97,21 @@ void mazeApp::update(float deltaTime) {
 	aie::Input* input = aie::Input::getInstance();
 	
 	//sets the goal position (doesnt really work, have to click around the bottom left of the screen)
-	if (input->wasMouseButtonPressed(0) && hasStarted == false)
-	{
-		int goalSpawnX;
-		int goalSpawnY;
-		goalSpawnX = input->getMouseX();
-		goalSpawnY = input->getMouseY();
-		
-		hasStarted = true;
-		m_goal = new Sphere(glm::vec2(goalSpawnX,goalSpawnY), glm::vec2(0, 0), 1, 2, glm::vec4(0, 1, 0, 1));
-		m_physicsScene->addActor(m_goal);
-
-	}
+//	if (input->wasMouseButtonPressed(0) && hasStarted == false)
+//	{
+//		int goalSpawnX;
+//		int goalSpawnY;
+//		goalSpawnX = input->getMouseX();
+//		goalSpawnY = input->getMouseY();
+//		
+//		hasStarted = true;
+//		m_goal = new Sphere(glm::vec2(goalSpawnX,goalSpawnY), glm::vec2(0, 0), 1, 2, glm::vec4(0, 1, 0, 1));
+//		m_physicsScene->addActor(m_goal);
+//
+//	}
 	//after the person clicks 
-	if (hasStarted == true)
-	{
+//	if (hasStarted == true)
+//	{
 		aie::Gizmos::clear();
 
 		m_physicsScene->update(deltaTime);
@@ -125,7 +133,7 @@ void mazeApp::update(float deltaTime) {
 		}
 
 
-	}
+//	}
 	
 
 }
@@ -457,10 +465,15 @@ void mazeApp::strEpoch()
 		aiMove(m_player[i], m_ga->m_pop[i]);
 
 		//when the player hits the goal
-		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 1.5f)
+		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 2.5)
 		{
-			std::cout << "found after " << m_ga->m_generation << " generations" << std::endl;
-			m_ga->m_pop[i].strFitness = 0;
+			if (m_found == false)
+			{
+				std::cout << "found after " << m_ga->m_generation << " generations" << std::endl;
+
+			}
+			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) * 8) - m_numberOfMoves;
+			//m_ga->m_pop[i].strFitness = 0;
 			m_found = true;
 		}
 		//if the player hit a wall
@@ -471,7 +484,7 @@ void mazeApp::strEpoch()
 		else
 		//fitness calc, distance is weighted more than number of moves
 		{
-			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*4) - m_numberOfMoves;
+			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*8) - m_numberOfMoves;
 		}
 
 		//outputs the fitness of every player

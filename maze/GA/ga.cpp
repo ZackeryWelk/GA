@@ -358,6 +358,14 @@ void ga::strEpoch()
 	strMutate(editedElite1);
 	vecBabyGenomes[1] = strChromoType(editedElite1, 0.0f, false);
 
+	std::string editedElite2 = temp.strBits;
+	strMutate(editedElite2);
+	vecBabyGenomes[2] = strChromoType(editedElite1, 0.0f, false);
+
+	std::string editedElite3 = temp.strBits;
+	strMutate(editedElite3);
+	vecBabyGenomes[3] = strChromoType(editedElite1, 0.0f, false);
+
 	//removes the lowest scoring half of the pop
 	for (int b = 0; b < POPSIZE / 2; b++)
 	{
@@ -384,7 +392,7 @@ void ga::strEpoch()
 
 
 	//change this depending on how much elitism there is
-	int cPop = 2;
+	int cPop = 4;
 
 	while (cPop < m_popSize)
 	{

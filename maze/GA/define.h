@@ -1,10 +1,10 @@
 #pragma once
 
 
-#define CROSSOVERRATE 0.7
-#define MUTATIONRATE 0.0075
+#define CROSSOVERRATE 0.8
+#define MUTATIONRATE 0.008
 
-#define POPSIZE 50
+#define POPSIZE 60
 
 
 #define GENELENGTH 4
