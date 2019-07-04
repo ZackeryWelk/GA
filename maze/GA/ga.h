@@ -111,7 +111,7 @@ public:
 	strChromoType vecBabyGenomes[POPSIZE];
 	strChromoType ReplaceGenome[POPSIZE];
 	strChromoType temp;
-
+	std::string bestFitBits;
 
 	int m_generation;
 

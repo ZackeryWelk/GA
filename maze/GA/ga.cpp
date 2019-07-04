@@ -352,7 +352,9 @@ void ga::strEpoch()
 	strFindHighestFit();
 	vecBabyGenomes[0] = temp;
 	vecBabyGenomes[0].strFitness = 0;
-	
+	//saving the best fitness scoring bits
+	bestFitBits = temp.strBits;
+
 	//takes the best scoring chromo and instead of carrying it over directly it goes through mutation so it is slightly different to the current best gene 
 	std::string editedElite1 = temp.strBits;
 	strMutate(editedElite1);

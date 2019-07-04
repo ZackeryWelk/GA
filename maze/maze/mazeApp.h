@@ -61,9 +61,10 @@ protected:
 	std::vector<Plane*>  m_bounds;
 	glm::vec2			m_playerSpawnPos;
 	Sphere*				m_goal;
+	Sphere*				m_bestPath;
 	PhysicsScene*		m_physicsScene;
 
-	
+	char				m_playAfterFound;
 
 	//genetic algorithm stuff
 	//std::vector<Genome>		m_vecPop;

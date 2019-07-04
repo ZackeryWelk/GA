@@ -39,10 +39,12 @@ bool mazeApp::startup() {
 	m_startPoint = new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 2, glm::vec4(1, 1, 1, 1));
 	m_physicsScene->addActor(m_startPoint);
 
+	m_bestPath = new Sphere(glm::vec2(-70, -40), glm::vec2(0, 0), 2, 1.5f, glm::vec4(1, 1, 1, 1));
+	m_physicsScene->addActor(m_bestPath);
 	
 	std::random_device generator;
 	//number of walls and where they can spawn
-	std::uniform_int_distribution<int> distribution(0, 35);
+	std::uniform_int_distribution<int> distribution(0, 25);
 	std::uniform_int_distribution<int> locDistributionX(-60, 60);
 	std::uniform_int_distribution<int> locDistributionY(-40, 40);
 
@@ -127,6 +129,7 @@ void mazeApp::update(float deltaTime) {
 			{
 				m_player[i]->setPosition(m_playerSpawnPos);
 				m_startPoint->setPosition(m_playerSpawnPos);
+				m_bestPath->setPosition(m_playerSpawnPos);
 			}
 			isRunning = true;
 			strEpoch();
@@ -296,7 +299,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				//moves the player by a set amount
 				test->setPosition(test->getPosition() - glm::vec2(-2, 0));
 				//draws a line from the place it was to where the player is now
-				aie::Gizmos::add2DLine(origPos, test->getPosition(),glm::vec4(1,0,0,1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//right
 			else if (m_moveOrder[i] == 2)
@@ -304,7 +314,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(2, 0));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//up
 			else if (m_moveOrder[i] == 3)
@@ -312,7 +329,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(0, 2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//down
 			else if (m_moveOrder[i] == 4)
@@ -320,7 +344,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(0, -2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//up left
 			else if (m_moveOrder[i] == 5)
@@ -328,7 +359,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(-2, 2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//up right
 			else if (m_moveOrder[i] == 6)
@@ -336,7 +374,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(2, 2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//down right
 			else if (m_moveOrder[i] == 7)
@@ -344,7 +389,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(2, -2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 			//down left
 			else if (m_moveOrder[i] == 8)
@@ -352,7 +404,14 @@ void mazeApp::aiMove(Sphere* test, strChromoType pop)
 				glm::vec2 origPos = test->getPosition();
 				test->setPosition(test->getPosition() - glm::vec2(-2, -2));
 
-				aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				if (pop.strBits == m_ga->bestFitBits)
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 1, 1, 1));
+				}
+				else
+				{
+					aie::Gizmos::add2DLine(origPos, test->getPosition(), glm::vec4(1, 0, 0, 1));
+				}
 			}
 
 			//counts how many move the ai makes to get to the goal and will stop moving, will use this in fitness function to try and reduce amount of moves
@@ -467,14 +526,16 @@ void mazeApp::strEpoch()
 		//when the player hits the goal
 		if (glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) <= 2.5)
 		{
+
+			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) * 15) - m_numberOfMoves;
+			//m_ga->m_pop[i].strFitness = 0;
 			if (m_found == false)
 			{
-				std::cout << "found after " << m_ga->m_generation << " generations" << std::endl;
+				std::cout << "found after " << m_ga->m_generation << " generations" << std::endl << std::endl;
 
 			}
-			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition()) * 8) - m_numberOfMoves;
-			//m_ga->m_pop[i].strFitness = 0;
 			m_found = true;
+
 		}
 		//if the player hit a wall
 		else if (m_ga->m_pop[i].strWall == true)
@@ -484,7 +545,7 @@ void mazeApp::strEpoch()
 		else
 		//fitness calc, distance is weighted more than number of moves
 		{
-			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*8) - m_numberOfMoves;
+			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*20) - m_numberOfMoves;
 		}
 
 		//outputs the fitness of every player
