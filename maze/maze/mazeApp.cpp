@@ -121,6 +121,13 @@ void mazeApp::update(float deltaTime) {
 		if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 			quit();
 
+		if (input->isKeyDown(aie::INPUT_KEY_R))
+		{
+			m_player.clear();
+			m_walls.clear();
+			startup();
+		}
+
 		if (isRunning == false)
 		{//after each generation resets the players positions
 			for (int i = 0; i < m_player.size(); i++)
@@ -520,6 +527,14 @@ void mazeApp::strEpoch()
 	{
 
 		//runs the functions to move the player
+		if (m_ga->m_pop[0].strBits == "")
+		{
+			m_ga->m_pop[0].strBits = m_ga->m_pop[4].strBits;
+			m_ga->m_pop[1].strBits = m_ga->m_pop[5].strBits;
+			m_ga->m_pop[2].strBits = m_ga->m_pop[6].strBits;
+			m_ga->m_pop[3].strBits = m_ga->m_pop[7].strBits;
+
+		}
 		strMovement(m_ga->m_pop[i].strBits);
 		aiMove(m_player[i], m_ga->m_pop[i]);
 

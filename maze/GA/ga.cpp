@@ -338,8 +338,18 @@ void ga::strEpoch()
 {
 	//creating a new population
 
+
 	//working as primitive elitism by just carrying over the top 1 fitness to the next generation
-	strFindHighestFit();
+	bestFit = m_pop[4].strFitness;
+	for (int i = 0; i < POPSIZE; i++)
+	{
+		if (bestFit <= m_pop[i].strFitness)
+		{
+			bestFit = m_pop[i].strFitness;
+			temp = m_pop[i];
+		}
+	}
+	//strFindHighestFit();
 	vecBabyGenomes[0] = temp;
 	vecBabyGenomes[0].strFitness = 0;
 	//saving the best fitness scoring bits
@@ -358,14 +368,6 @@ void ga::strEpoch()
 	strMutate(editedElite3);
 	vecBabyGenomes[3] = strChromoType(editedElite1, 0.0f, false);
 
-	//if (m_pop[0].strBits == "")
-	//{
-	//	m_pop[0].strBits = m_pop[4].strBits;
-	//	m_pop[1].strBits = m_pop[5].strBits;
-	//	m_pop[2].strBits = m_pop[6].strBits;
-	//	m_pop[3].strBits = m_pop[7].strBits;
-	//
-	//}
 
 	//removes the lowest scoring half of the pop
 	for (int b = 0; b < POPSIZE / 2; b++)
@@ -421,7 +423,6 @@ void ga::strEpoch()
 
 	//counting to the next gen
 	++m_generation;
-	bestFit = NULL;
 }
 
 //void ga::strGrabNBest(int nBest, const int numCopies, strChromoType vecNewPop[])
@@ -451,10 +452,7 @@ void ga::strCalcTotFitness()
 //find the highest scoring chromosome and is saved to be used in elitism
 void ga::strFindHighestFit()
 {
-	if (bestFit == NULL)
-	{
-		bestFit = m_pop[0].strFitness;
-	}
+	bestFit = m_pop[4].strFitness;
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
