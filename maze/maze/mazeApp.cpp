@@ -79,8 +79,6 @@ bool mazeApp::startup() {
 
 	//genetic algorithm initialisation
 	m_ga = new ga(CROSSOVERRATE, MUTATIONRATE, POPSIZE, CHROMOSOMELENGTH, GENELENGTH);
-		
-
 	
 	return true;
 }
@@ -211,17 +209,18 @@ void mazeApp::draw() {
 
 void mazeApp::strMovement(std::string bits)
 {
-	int buffer[(int)(CHROMOSOMELENGTH / GENELENGTH)];
+	int buffer[(int)(CHROMOSOMELENGTH / GENELENGTH)]{ 0 };
 	//counting up how many moves the user can do
+
 	int elementsNum = m_ga->strParseBits(bits, buffer);
 
 	//after converting binary to numbers ranging from 0-15, separates them into numbers 1-8 for each direction of movement
 	/*
-	5=upLeft	3= up		6= upRight
-	1= left				    2= right
-	8=downLeft	4= down		7= downRight
+	8/9=   upLeft	4/5= up		10/11= upRight
+	0/1=   left				    2/3=   right
+	14/15= downLeft	6/7= down	12/13= downRight
 	*/
-	for (int i = 0; i < elementsNum - 1; i += 2)
+	for (int i = 0; i < elementsNum; i++)
 	{
 		switch (buffer[i])
 		{
@@ -519,7 +518,9 @@ void mazeApp::strEpoch()
 
 	for (int i = 0; i < POPSIZE; i++)
 	{
+
 		//runs the functions to move the player
+		std::cout << i << " " << m_ga->m_pop[i].strBits << std::endl;
 		strMovement(m_ga->m_pop[i].strBits);
 		aiMove(m_player[i], m_ga->m_pop[i]);
 
@@ -546,6 +547,10 @@ void mazeApp::strEpoch()
 		//fitness calc, distance is weighted more than number of moves
 		{
 			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*20) - m_numberOfMoves;
+			if (m_ga->m_pop[i].strFitness == 0.0f)
+			{
+				std::cout << i << "Why Dice!@";
+			}
 		}
 
 		//outputs the fitness of every player

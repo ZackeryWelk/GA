@@ -197,9 +197,9 @@ void ga::createStartPop()
 	//str start pop
 	for (int i = 0; i < POPSIZE; i++)
 	{
+		m_pop[i] = strChromoType();
 		//generates random bits and sets each thing in the pop to have no fitness and sets generation count to 0
 		m_pop[i].strBits = strGetRandBits(CHROMOSOMELENGTH);
-		
 		m_pop[i].strFitness = 0.0f;
 		m_generation = 0;
 	}
@@ -260,17 +260,7 @@ int ga::strParseBits(std::string bits, int * buffer)
 
 	for (int i = 0; i < CHROMOSOMELENGTH; i += GENELENGTH)
 	{			
-		thisGene = strBinToDec(bits.substr(i, GENELENGTH));
-
-		if (thisGene > 15)
-		{
-			continue;
-		}
-		else
-		{
-			buffer[cBuff++] = thisGene;
-			continue;
-		}
+		buffer[cBuff++] = strBinToDec(bits.substr(i, GENELENGTH));
 	}
 	return cBuff;
 }
@@ -367,6 +357,15 @@ void ga::strEpoch()
 	std::string editedElite3 = temp.strBits;
 	strMutate(editedElite3);
 	vecBabyGenomes[3] = strChromoType(editedElite1, 0.0f, false);
+
+	if (m_pop[0].strBits == "")
+	{
+		m_pop[0].strBits = m_pop[4].strBits;
+		m_pop[1].strBits = m_pop[5].strBits;
+		m_pop[2].strBits = m_pop[6].strBits;
+		m_pop[3].strBits = m_pop[7].strBits;
+
+	}
 
 	//removes the lowest scoring half of the pop
 	for (int b = 0; b < POPSIZE / 2; b++)

@@ -6,6 +6,8 @@
 #include <math.h>
 #include <string>
 #include <random>
+#include <limits>
+
 
 //struct Genome
 //{
@@ -61,6 +63,8 @@ public:
 		createStartPop();
 	}
 
+	ga() = delete;
+
 	
 	//updates fitness scores, creates a new pop using selection crossover and mutation.
 	//void epoch();
@@ -98,7 +102,7 @@ protected:
 	ga*		test;
 	strChromoType temp2;
 
-	int bestFit;
+	int bestFit = NULL;
 	int worstFitIndex;
 
 

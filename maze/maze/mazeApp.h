@@ -48,7 +48,7 @@ protected:
 	//string ga
 	std::vector<int>	m_moveOrder;
 	bool				m_found = false;
-	float				strFitness;
+	//float				strFitness;
 	float				m_timer = 0.0f;
 	bool				m_isMoving;
 
