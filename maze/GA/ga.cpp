@@ -462,7 +462,6 @@ void ga::strFindHighestFit()
 		{
 			bestFit = m_pop[i].strFitness;
 			temp = m_pop[i];
-			temp2 = m_pop[i];
 		}
 	}
 }

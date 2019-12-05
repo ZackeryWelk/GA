@@ -100,7 +100,6 @@ private:
 
 protected:
 	ga*		test;
-	strChromoType temp2;
 
 	int bestFit = NULL;
 	int worstFitIndex;
