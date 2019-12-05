@@ -520,7 +520,6 @@ void mazeApp::strEpoch()
 	{
 
 		//runs the functions to move the player
-		std::cout << i << " " << m_ga->m_pop[i].strBits << std::endl;
 		strMovement(m_ga->m_pop[i].strBits);
 		aiMove(m_player[i], m_ga->m_pop[i]);
 
@@ -547,10 +546,6 @@ void mazeApp::strEpoch()
 		//fitness calc, distance is weighted more than number of moves
 		{
 			m_ga->m_pop[i].strFitness = (-glm::distance(m_player[i]->getPosition(), m_goal->getPosition())*20) - m_numberOfMoves;
-			if (m_ga->m_pop[i].strFitness == 0.0f)
-			{
-				std::cout << i << "Why Dice!@";
-			}
 		}
 
 		//outputs the fitness of every player

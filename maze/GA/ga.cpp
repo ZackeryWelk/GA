@@ -358,14 +358,14 @@ void ga::strEpoch()
 	strMutate(editedElite3);
 	vecBabyGenomes[3] = strChromoType(editedElite1, 0.0f, false);
 
-	if (m_pop[0].strBits == "")
-	{
-		m_pop[0].strBits = m_pop[4].strBits;
-		m_pop[1].strBits = m_pop[5].strBits;
-		m_pop[2].strBits = m_pop[6].strBits;
-		m_pop[3].strBits = m_pop[7].strBits;
-
-	}
+	//if (m_pop[0].strBits == "")
+	//{
+	//	m_pop[0].strBits = m_pop[4].strBits;
+	//	m_pop[1].strBits = m_pop[5].strBits;
+	//	m_pop[2].strBits = m_pop[6].strBits;
+	//	m_pop[3].strBits = m_pop[7].strBits;
+	//
+	//}
 
 	//removes the lowest scoring half of the pop
 	for (int b = 0; b < POPSIZE / 2; b++)
@@ -421,7 +421,7 @@ void ga::strEpoch()
 
 	//counting to the next gen
 	++m_generation;
-	
+	bestFit = NULL;
 }
 
 //void ga::strGrabNBest(int nBest, const int numCopies, strChromoType vecNewPop[])
